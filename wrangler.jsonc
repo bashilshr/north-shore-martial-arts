@@ -3,11 +3,7 @@
   "name": "north-shore-martial-arts",
   "compatibility_date": "2026-10-01",
   "observability": {
-    "logs": {
-      "enabled": true,
-      "invocation_logs": true,
-      "persist": true
-    }
+    "enabled": false
   },
   // Static site: `npm run build` writes every page into ./dist
   // (index.html, kickboxing/index.html, timetable/index.html, 404.html ...).
