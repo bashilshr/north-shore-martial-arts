@@ -4,10 +4,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/sync-photos.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/sync-photos.mjs",
     "build": "astro build",
     "preview": "astro preview",
-    "images": "node scripts/fetch-images.mjs"
+    "images": "node scripts/fetch-images.mjs",
+    "photos": "node scripts/sync-photos.mjs"
   },
   "dependencies": {
     "astro": "^7.4.4"

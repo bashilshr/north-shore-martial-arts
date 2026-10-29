@@ -1,10 +1,13 @@
-// Downloads the photos and affiliation logos from the club's current WordPress site into public/images.
+// Downloads the photos and affiliation logos from the club's current WordPress site into the
+// private photos folder (../photos by default, or PHOTOS_DIR). It is kept out of git on purpose.
 // Run once: npm run images
 import { mkdir, writeFile, access } from 'node:fs/promises';
-import { basename } from 'node:path';
+import { basename, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const BASE = 'https://www.northshoremixedmartialartsclub.com.au/wp-content/uploads/';
-const OUT = new URL('../public/images/', import.meta.url);
+const root = fileURLToPath(new URL('..', import.meta.url));
+const OUT = pathToFileURL(resolve(root, process.env.PHOTOS_DIR || '../photos') + '/');
 const FILES = [
   '2019/06/boxing-1-1.jpg',
   '2019/06/boxing-2-1.jpg',
@@ -64,5 +67,5 @@ for (const path of FILES) {
   }
 }
 console.log(failed
-  ? `${failed} failed. Copy those files into public/images/ by hand (e.g. from the WordPress media library).`
+  ? `${failed} failed. Copy those files into the photos folder by hand (e.g. from the WordPress media library).`
   : 'All images ready');

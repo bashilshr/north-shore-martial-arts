@@ -27,11 +27,23 @@ npm run build     # outputs static files to dist/
 npm run preview   # serve the built dist/
 ```
 
-## Photos (action needed)
+## Photos (kept out of this repo)
 
-The site looks for photos and affiliation logos in `public/images/`, using the same filenames as the WordPress uploads. Any image that's missing shows a labelled placeholder.
+The club's photos and affiliation logos are **not committed**. Keep them in a private folder next to the repo, using the same filenames as the WordPress uploads:
 
-`npm run images` tries to download them from the current site. The host's bot protection currently blocks that, so copy them in by hand from the WordPress media library. The script lists the exact files it expects.
+```
+Takewondo/
+  photos/   <- the images (private, never committed)
+  site/     <- this repo
+```
+
+`npm run dev` and `npm run build` copy them into `public/images/` first. That folder is git-ignored.
+
+- To use a different folder, set `PHOTOS_DIR=/path/to/photos`.
+- Any image that's missing shows a labelled placeholder.
+- `npm run images` tries to download the files from the current site. The host's bot protection currently blocks it, so copy them in by hand from the WordPress media library. The script lists the exact filenames.
+
+When deploying, build on a machine that has the photos folder (or give your CI host the photos some other way). Otherwise the deployed site will show placeholders.
 
 ## Free-trial booking form
 
