@@ -1,0 +1,32 @@
+---
+import { NAV, PHONE, PHONE_HREF, ADDRESS } from '../data/site';
+
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+---
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a class="brand" href="/" aria-label="North Shore Martial Arts Club, home">
+      <img src="/logo-mark.png" alt="" width="40" height="42">
+      <span>North Shore <span>Martial Arts</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Main">
+      {NAV.map((n) => (
+        <a class="nav__link" href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a>
+      ))}
+      <a class="btn btn--accent nav__cta" href="/timetable/">Book a free trial</a>
+    </nav>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>Menu</button>
+  </div>
+</header>
+
+<div class="menu" id="menu" aria-label="Menu">
+  <nav class="menu__links" aria-label="Mobile">
+    {NAV.map((n, i) => (
+      <a class="menu__link" href={n.href} aria-current={path === n.href ? 'page' : undefined}><span>0{i + 1}</span>{n.label}</a>
+    ))}
+  </nav>
+  <div class="menu__foot">
+    <a class="btn btn--accent btn--lg" href="/timetable/">Book a free trial</a>
+    <a href={PHONE_HREF}>{PHONE} · {ADDRESS[0]}, Cremorne</a>
+  </div>
+</div>

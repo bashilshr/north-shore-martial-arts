@@ -1,0 +1,32 @@
+---
+import { PROGRAMS, KIDS, PHONE, PHONE_HREF, ADDRESS, FACEBOOK, programHref } from '../data/site';
+---
+<footer class="footer">
+  <div class="wrap footer__cols">
+    <div class="footer__col">
+      <h2>Programs</h2>
+      {PROGRAMS.map((p) => <a href={programHref(p)}>{p.name}</a>)}
+    </div>
+    <div class="footer__col">
+      <h2>Kids</h2>
+      {KIDS.map((k) => <a href={`/kids-martial-arts/#${k.key}`}>{k.name} ({k.ages})</a>)}
+    </div>
+    <div class="footer__col">
+      <h2>Get in touch</h2>
+      <a href={PHONE_HREF}>{PHONE}</a>
+      <a href={FACEBOOK} rel="noopener">Facebook</a>
+    </div>
+    <div class="footer__col">
+      <h2>Location</h2>
+      <p>{ADDRESS[0]}<br>{ADDRESS[1]}</p>
+      <a class="btn btn--accent btn--sm" href="/timetable/">Book a free trial</a>
+    </div>
+  </div>
+  <div class="wrap footer__word" aria-hidden="true">
+    <p data-reveal>North Shore</p>
+  </div>
+  <div class="wrap footer__base">
+    <span>© {new Date().getFullYear()} North Shore Martial Arts Club</span>
+    <span>Courage · Respect · Integrity · Loyalty</span>
+  </div>
+</footer>

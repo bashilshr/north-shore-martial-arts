@@ -1,0 +1,71 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import BookingSheet from '../components/BookingSheet.astro';
+import { PHONE, ADDRESS, FACEBOOK } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { title, description, image = '/images/kickboxing273-500.jpg' } = Astro.props;
+const site = Astro.site ?? new URL('https://www.northshoremixedmartialartsclub.com.au');
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(image, site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsActivityLocation',
+  name: 'North Shore Martial Arts Club',
+  url: site.href,
+  telephone: PHONE,
+  image: ogImage,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: ADDRESS[0],
+    addressLocality: 'Cremorne',
+    addressRegion: 'NSW',
+    postalCode: '2090',
+    addressCountry: 'AU',
+  },
+  sameAs: [FACEBOOK],
+};
+---
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonical}>
+  <meta name="theme-color" content="#171717">
+  <link rel="icon" type="image/png" href="/logo-mark.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={ogImage}>
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <script is:inline>document.documentElement.classList.add('js');</script>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <Nav />
+  <main id="main">
+    <slot />
+  </main>
+  <Footer />
+  <BookingSheet />
+  <script>
+    import '../scripts/site.ts';
+  </script>
+</body>
+</html>

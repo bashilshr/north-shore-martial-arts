@@ -1,0 +1,32 @@
+---
+import { PHONE, PHONE_HREF } from '../data/site';
+---
+<div class="scrim" data-sheet-close></div>
+<div class="sheet" id="booking" role="dialog" aria-modal="true" aria-labelledby="booking-title" aria-hidden="true">
+  <div class="sheet__grip" aria-hidden="true"></div>
+  <form novalidate data-booking-form>
+    <div>
+      <p class="eyebrow">Free trial request</p>
+      <h2 class="head" id="booking-title" data-book-cls></h2>
+      <p class="sheet__when" data-book-when></p>
+    </div>
+    <input type="hidden" name="class">
+    <input type="hidden" name="when">
+    <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="sheet__fields">
+      <label class="sr-only" for="book-name">Your name</label>
+      <input class="field" id="book-name" name="name" placeholder="Your name" autocomplete="name" required>
+      <label class="sr-only" for="book-phone">Phone</label>
+      <input class="field" id="book-phone" name="phone" type="tel" placeholder="Phone" autocomplete="tel" required>
+    </div>
+    <p class="form-error" role="alert" data-form-error></p>
+    <button class="btn btn--accent btn--lg" type="submit">Request this spot</button>
+    <p class="sheet__note">We'll call to confirm. Or ring <a href={PHONE_HREF}>{PHONE}</a> now.</p>
+  </form>
+  <div class="sheet__done" aria-live="polite">
+    <span class="sheet__check" aria-hidden="true">✓</span>
+    <h2 class="head">Request sent</h2>
+    <p data-done-msg></p>
+    <button class="btn btn--glass" type="button" data-sheet-close>Done</button>
+  </div>
+</div>

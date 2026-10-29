@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PROGRAMS, PHONE, PHONE_HREF, img, programHref, sessions, type Program, type Level } from '../data/site';
+
+export function getStaticPaths() {
+  return PROGRAMS.map((program) => ({ params: { slug: program.slug }, props: { program } }));
+}
+
+const { program } = Astro.props as { program: Program };
+const levels: Level[] = program.levels ?? [program.level!];
+const hasTabs = levels.length > 1;
+const others = PROGRAMS.filter((p) => p.id !== program.id);
+---
+<Layout title={`${program.title} — North Shore Martial Arts Club, Cremorne`} description={program.description} image={img(program.hero)}>
+  <section class="hero hero--program">
+    <div class="hero__img" data-parallax data-label={program.heroLabel}>
+      <img src={img(program.hero)} alt="" fetchpriority="high">
+    </div>
+    <div class="hero__shade"></div>
+    <div class="wrap program-hero__body">
+      <a class="back-link" href="/#programs">← All programs</a>
+      <p class="eyebrow eyebrow--muted">Program {program.num} · {program.ages}</p>
+      <h1 class="display program-hero__title"><span class="word" style="animation-delay:120ms">{program.title}</span></h1>
+    </div>
+  </section>
+
+  <section class="wrap program-intro" data-reveal>
+    <p>{program.intro}</p>
+    <div class="btn-row">
+      <a class="btn btn--accent" href="/timetable/">Book a free trial</a>
+      <a class="btn btn--outline" href={PHONE_HREF}>{PHONE}</a>
+    </div>
+  </section>
+
+  {hasTabs && (
+    <section class="wrap level-tabs">
+      <div class="segmented" role="tablist" aria-label="Choose an age group" data-level-tabs>
+        {levels.map((l, i) => (
+          <button type="button" role="tab" id={`tab-${l.key}`} aria-controls={`level-${l.key}`} aria-selected={i === 0 ? 'true' : 'false'} data-key={l.key}>{l.name} · {l.ages}</button>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {levels.map((l, i) => {
+    const list = sessions(l.key ? l.name : program.name, l.sessions);
+    return (
+      <section class="wrap level-grid" id={hasTabs ? `level-${l.key}` : undefined} role={hasTabs ? 'tabpanel' : undefined} aria-labelledby={hasTabs ? `tab-${l.key}` : undefined} hidden={i !== 0} data-reveal>
+        <div class="card level-card">
+          <div class="kicker"><span>{l.kicker}</span><span>{l.ages}</span></div>
+          <h2 class="head">{l.name}</h2>
+          <p class="level-card__text">{l.text}</p>
+          <ul class="plain points">{l.points.map((pt) => <li>{pt}</li>)}</ul>
+          {l.footnote && <p class="footnote">{l.footnote}</p>}
+        </div>
+        <div class="stack" style="gap:14px">
+          <div class="card week-card">
+            <p class="eyebrow eyebrow--muted" style="font-size:12px;font-weight:400">This week</p>
+            {list.length > 0 ? (
+              <div class="week-list">
+                {list.map((s) => (
+                  <button class="session-row" type="button" data-book data-cls={s.cls} data-when={s.when}>
+                    <span><strong>{s.day} · {s.time}</strong>{s.note && <small>{s.note}</small>}</span>
+                    <span>Book →</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p class="level-card__text">Sessions run by appointment. Call <a href={PHONE_HREF} style="font-weight:600;color:var(--accent)">{PHONE}</a> and we'll find a time.</p>
+            )}
+          </div>
+          <div class="gallery">
+            <div class="photo" data-label="Class photo"><img src={img(program.g1)} alt={`${program.name} class`} loading="lazy"></div>
+            <div class="photo" data-label="Class photo"><img src={img(program.g2)} alt={`${program.name} class`} loading="lazy"></div>
+          </div>
+        </div>
+      </section>
+    );
+  })}
+
+  <section class="wrap other-programs">
+    <p class="eyebrow eyebrow--muted">Other programs</p>
+    <ul class="plain">
+      {others.map((o) => (
+        <li><a class="other-link" href={programHref(o)}><span><span class="num">{o.num}</span>{o.name}</span><span aria-hidden="true">→</span></a></li>
+      ))}
+    </ul>
+  </section>
+</Layout>

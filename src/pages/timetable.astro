@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { KIDS, TEENS, DAYS, PHONE_HREF, sessions } from '../data/site';
+
+const all = [
+  ...KIDS.flatMap((k) => sessions(k.name, k.sessions).map((s) => ({ ...s, group: 'kids' }))),
+  ...sessions(TEENS.name, TEENS.sessions).map((s) => ({ ...s, group: 'teens' })),
+];
+const week = DAYS.map((day) => ({ day, sessions: all.filter((s) => s.dayLong === day) }));
+const groups = [['kids', 'Kids'], ['teens', 'Teens'], ['all', 'Everything']];
+const DEFAULT = 'kids';
+---
+<Layout
+  title="Timetable & Free Trial — North Shore Martial Arts Club, Cremorne"
+  description="Weekly class timetable for kids martial arts and teens boxing, kickboxing and MMA in Cremorne. Tap any session to request a free trial."
+>
+  <section class="wrap tt-head rise">
+    <p class="eyebrow">Timetable · Free trial</p>
+    <h1 class="display">Pick a class.<br>We'll hold a spot.</h1>
+    <p>Tap any session to request a free trial. Bookings essential; the timetable can change, so we confirm by phone.</p>
+    <div class="segmented" role="group" aria-label="Filter classes" data-tt-filter>
+      {groups.map(([g, label]) => (
+        <button type="button" data-group={g} aria-pressed={g === DEFAULT ? 'true' : 'false'}>{label}</button>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap week" data-reveal data-tt-week aria-live="polite">
+    {week.map((d) => {
+      const visible = d.sessions.filter((s) => s.group === DEFAULT).length;
+      return (
+        <div class="day">
+          <h2>{d.day}</h2>
+          {d.sessions.map((s) => (
+            <button class="slot" type="button" data-book data-cls={s.cls} data-when={s.when} data-group={s.group} hidden={s.group !== DEFAULT}>
+              <span class="slot__time">{s.time}</span>
+              <span class="slot__cls">{s.cls}</span>
+              {s.note && <span class="slot__note">{s.note}</span>}
+            </button>
+          ))}
+          <div class="day__empty" hidden={visible > 0}>No classes</div>
+        </div>
+      );
+    })}
+  </section>
+
+  <section class="wrap tt-foot">
+    <div class="card adults-cta">
+      <div>
+        <h2 class="head">Adults: Krav Maga, MMA, Boxing, Kickboxing</h2>
+        <p>Adult and teen sessions run by appointment around the kids timetable.</p>
+      </div>
+      <a class="btn btn--accent" href={PHONE_HREF}>Call to arrange</a>
+    </div>
+  </section>
+</Layout>

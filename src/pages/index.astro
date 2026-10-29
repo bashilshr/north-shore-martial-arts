@@ -1,0 +1,159 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PROGRAMS, VALUES, STATS, STEPS, QUOTES, AFFILIATIONS, PHONE, PHONE_HREF, img, programHref } from '../data/site';
+---
+<Layout
+  title="North Shore Martial Arts Club — Cremorne"
+  description="Kids martial arts, kickboxing, boxing and self defence on Military Road, Cremorne, led by Hall of Fame instructor Master Steven Tran. Book a free trial."
+>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__img" data-parallax data-label="Hero: kickboxing">
+      <img src={img('kickboxing273-500.jpg')} alt="" fetchpriority="high">
+    </div>
+    <div class="hero__shade"></div>
+    <div class="hero__plus" aria-hidden="true"><span>+</span><span>+</span><span>+</span></div>
+    <div class="wrap hero__body">
+      <div class="rise">
+        <h1 class="display hero__title">
+          <span class="word" style="animation-delay:100ms">Train</span><br>
+          <span class="word" style="animation-delay:220ms">Hard.</span><br>
+          <span class="word plus" style="animation-delay:340ms">Stand</span>{" "}
+          <span class="word plus" style="animation-delay:440ms">Tall.</span>
+        </h1>
+      </div>
+      <div class="hero__side rise">
+        <p>Martial arts, kickboxing, boxing and self defence in a bright, clean studio on Military Road, led by Hall of Fame instructor Master Steven Tran.</p>
+        <div class="btn-row">
+          <a class="btn btn--accent btn--lg" href="/timetable/">Book a free trial</a>
+          <a class="btn btn--glass btn--lg" href="#programs" data-smooth>See programs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AFFILIATIONS MARQUEE -->
+  <section class="marquee" aria-labelledby="affiliations-title">
+    <p class="wrap eyebrow" id="affiliations-title">Affiliations</p>
+    <div class="marquee__track">
+      {[0, 1].map((copy) => AFFILIATIONS.map((a) => (
+        <span class="marquee__item" aria-hidden={copy === 1 ? 'true' : undefined}>
+          <span class="marquee__logo" data-label={a.name}><img src={img(a.file)} alt={copy === 0 ? a.name : ''} title={a.name} loading="lazy"></span>
+          <span class="plus" aria-hidden="true">+</span>
+        </span>
+      )))}
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="wrap grid-auto manifesto">
+    <div class="stack" data-reveal style="gap:28px">
+      <p class="eyebrow">What is North Shore Martial Arts</p>
+      <h2 class="display h2">A club where kids find their feet and adults find their fight.</h2>
+      <p class="lead">Structured, fun and educational. Four age-graded kids programs with coloured belts so every child has a next goal in reach, and adult sessions built around technique first, fitness fast.</p>
+      <a class="btn btn--outline" href="/kids-martial-arts/" style="align-self:flex-start">Kids classes →</a>
+    </div>
+    <ul class="plain values" data-reveal style="--d:120ms" aria-label="Our values">
+      {VALUES.map((v) => (
+        <li><span class="num">{v.num}</span><span class={v.accent ? 'accent' : undefined}>{v.name}</span></li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="programs" id="programs" aria-labelledby="programs-title">
+    <div class="wrap programs__head" data-reveal>
+      <div class="stack" style="gap:14px">
+        <p class="eyebrow">Our programs</p>
+        <h2 class="display h2" id="programs-title">Five ways in.</h2>
+        <p class="programs__hint">Drag to browse · tap a card for details</p>
+      </div>
+      <div class="btn-row" style="gap:8px">
+        <button class="icon-btn" type="button" aria-label="Previous programs" data-car-prev>←</button>
+        <button class="icon-btn" type="button" aria-label="Next programs" data-car-next>→</button>
+      </div>
+    </div>
+    <div class="carousel" data-reveal data-carousel style="--d:150ms">
+      <div class="carousel__track" data-car-track>
+        {PROGRAMS.map((p) => (
+          <a class="program-card" href={programHref(p)} draggable="false">
+            <div class="kicker"><span>Program</span><span>{p.num}</span></div>
+            <h3 class="head">{p.name}</h3>
+            <div class="photo" data-label={p.imgLabel}><img src={img(p.img)} alt={p.imgLabel} loading="lazy" draggable="false"></div>
+            <div class="program-card__body">
+              <p class="program-card__ages">{p.ages}</p>
+              <p class="program-card__blurb">{p.blurb}</p>
+              <span class="link-arrow">Explore {p.name} →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTRUCTOR + NUMBERS -->
+  <section class="light">
+    <div class="wrap grid-auto instructor">
+      <div class="stack" data-reveal style="gap:24px">
+        <p class="eyebrow">Head instructor</p>
+        <h2 class="display">Master<br>Steven Tran</h2>
+        <p class="copy">World champion in Taekwondo and Kickboxing. Inducted into both the Australasian Martial Arts Hall of Fame and the World Karate Union Hall of Fame in 2019 for lifetime achievement in martial arts.</p>
+        <p class="copy">This isn't a gym with certificates on the wall. It's a coach parents describe the same way, every time: friendly, respectful and firm.</p>
+        <div class="photo" data-label="Master Tran portrait"><img src={img('master-tran-being-awarded-hall-of-fame-4.jpg')} alt="Master Steven Tran receiving his Hall of Fame award" loading="lazy"></div>
+      </div>
+      <div class="stack" data-reveal style="--d:120ms">
+        <p class="eyebrow" style="padding-bottom:18px">The club in numbers</p>
+        {STATS.map((s) => (
+          <div class="stat">
+            <div><p class="stat__label">{s.label}</p><p class="stat__detail">{s.detail}</p></div>
+            <p class="stat__value">{s.value}<span aria-hidden="true">+</span></p>
+          </div>
+        ))}
+        <div class="btn-row stats__cta">
+          <a class="btn btn--dark" href="/timetable/">Book a free trial</a>
+          <a class="btn btn--outline-dark" href={PHONE_HREF}>{PHONE}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="wrap process">
+    <div class="grid-auto process__head" data-reveal>
+      <div class="stack" style="gap:14px">
+        <p class="eyebrow">How it works</p>
+        <h2 class="display h2">From first class to black belt.</h2>
+      </div>
+      <p>Same path for a four-year-old Cub and a forty-year-old boxer: try it free, find the right level, grade when you're ready, keep showing up.</p>
+    </div>
+    <ol class="plain steps">
+      {STEPS.map((st, i) => (
+        <li class="card step" data-reveal style={`--d:${i * 90}ms`}>
+          <div class="kicker"><span>Step</span><span>{st.num}</span></div>
+          <h3 class="head">{st.title}</h3>
+          <p>{st.text}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="wrap testimonials" data-reveal data-testimonials aria-labelledby="quotes-title">
+    <p class="eyebrow" id="quotes-title">What parents and students say</p>
+    <div class="grid-auto">
+      <blockquote class="quote">
+        {QUOTES.map((q, i) => (
+          <p id={`quote-${i}`} role="tabpanel" aria-labelledby={`quote-tab-${i}`} hidden={i !== 0}>“{q.text}”</p>
+        ))}
+      </blockquote>
+      <div class="quote-tabs" role="tablist" aria-label="Testimonials">
+        {QUOTES.map((q, i) => (
+          <button class="quote-tab" id={`quote-tab-${i}`} type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`quote-${i}`}>
+            <span class="quote-tab__row"><span>{q.name}</span><span>{q.role}</span></span>
+            <span class="quote-tab__bar"><span class="quote-tab__fill"></span></span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
