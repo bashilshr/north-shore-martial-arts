@@ -10,9 +10,13 @@
     "build": "astro build",
     "preview": "astro preview",
     "images": "node scripts/fetch-images.mjs",
-    "photos": "node scripts/sync-photos.mjs"
+    "photos": "node scripts/sync-photos.mjs",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name=north-shore-martial-arts"
   },
   "dependencies": {
     "astro": "^7.4.4"
+  },
+  "devDependencies": {
+    "wrangler": "^4.155.0"
   }
 }
