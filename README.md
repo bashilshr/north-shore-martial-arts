@@ -52,8 +52,25 @@ The booking sheet POSTs `FormData` (`class`, `when`, `name`, `phone`) to `PUBLIC
 - **Not set, in dev:** it pretends the request succeeded and logs the request to the console.
 - **Not set, in production:** it tells the visitor to call instead. It never shows a fake "Request sent".
 
-## Deploy
+## Deploy (Cloudflare Workers)
 
-`npm run build` produces a plain static site in `dist/`. Upload it to any static host, such as Netlify, Vercel, Cloudflare Pages or SiteGround.
+Hosted as a static-assets Worker, set up the same way as jojolapa. See `wrangler.jsonc`:
+- `dist/` is served as-is.
+- `/kickboxing` redirects to `/kickboxing/`.
+- Unknown paths get `404.html` with a real 404 status.
+- `public/_headers` sets the cache rules.
+
+**Deploy from this machine (includes photos):**
+
+```sh
+npx wrangler login   # once
+npm run deploy       # build + wrangler deploy → https://north-shore-martial-arts.<your-subdomain>.workers.dev
+```
+
+**Auto-deploy from GitHub (like jojolapa):** in the Cloudflare dashboard, go to **Workers & Pages → north-shore-martial-arts → Settings → Build → Connect** and pick the repo. Use build command `npm run build` and deploy command `npx wrangler deploy`.
+
+The photos aren't in the repo, so Git builds will show placeholders until the photos are stored somewhere Cloudflare can reach.
+
+**Custom domain:** once the domain's DNS is on Cloudflare, uncomment `routes` in `wrangler.jsonc` and deploy.
 
 Update `site` in `astro.config.mjs` if the domain changes. It's used for canonical URLs, Open Graph tags and the LocalBusiness schema.

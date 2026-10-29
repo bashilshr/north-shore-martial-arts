@@ -1,5 +1,31 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 .astro/
+
+# Cloudflare / Wrangler local state
+.wrangler/
+.dev.vars*
+!.dev.vars.example
+
+# Environment (secrets like PUBLIC_BOOKING_ENDPOINT); .env.example is committed
 .env
+.env.*
+!.env.example
+
+# Club photos are private: they live in ../photos and are copied in at build time
 public/images/
+
+# Logs
+npm-debug.log*
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/

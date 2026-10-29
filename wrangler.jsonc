@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "north-shore-martial-arts",
+  "compatibility_date": "2026-10-01",
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "persist": true
+    }
+  },
+  // Static site: `npm run build` writes every page into ./dist
+  // (index.html, kickboxing/index.html, timetable/index.html, 404.html ...).
+  // /kickboxing redirects to /kickboxing/; unknown paths get 404.html with a real 404 status.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+  // When the domain moves to Cloudflare, add:
+  // "routes": [
+  //   { "pattern": "northshoremixedmartialartsclub.com.au", "custom_domain": true },
+  //   { "pattern": "www.northshoremixedmartialartsclub.com.au", "custom_domain": true }
+  // ],
+}
