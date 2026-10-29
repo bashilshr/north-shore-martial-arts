@@ -270,7 +270,7 @@ img { display: block; max-width: 100%; }
 
 /* ---------- Instructor (light section) ---------- */
 .light { background: var(--fg); color: var(--ink); }
-.light a { color: var(--ink); }
+.light a:not(.btn) { color: var(--ink); }
 .instructor { padding-top: var(--section-y); padding-bottom: var(--section-y); }
 .instructor h2 { font-size: clamp(40px, 6vw, 88px); line-height: 0.92; }
 .instructor .copy { font-size: 18px; line-height: 1.55; color: #3d3d3d; max-width: 50ch; text-wrap: pretty; }
