@@ -1,13 +1,13 @@
 ---
-import { NAV, PHONE, PHONE_HREF, ADDRESS } from '../data/site';
+import { NAV, PHONE, PHONE_HREF, ADDRESS, CLUB_NAME } from '../data/site';
 
 const path = Astro.url.pathname.replace(/\/?$/, '/');
 ---
 <header class="nav">
   <div class="wrap nav__inner">
-    <a class="brand" href="/" aria-label="North Shore Martial Arts Club, home">
+    <a class="brand" href="/" aria-label={`${CLUB_NAME}, home`}>
       <img src="/logo-mark.png" alt="" width="40" height="42">
-      <span>North Shore <span>Martial Arts</span></span>
+      <span class="brand__name"><span>North Shore</span><span>Mixed Martial Arts Club</span></span>
     </a>
     <nav class="nav__links" aria-label="Main">
       {NAV.map((n) => (

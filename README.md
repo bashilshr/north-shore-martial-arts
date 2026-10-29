@@ -1,4 +1,4 @@
-# North Shore Martial Arts Club website
+# North Shore Mixed Martial Arts Club (NSMMAC) website
 
 Static website built with [Astro](https://astro.build) from the v2 design in `../Website redesign with Apple design/`.
 

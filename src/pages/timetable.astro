@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { KIDS, TEENS, DAYS, PHONE_HREF, sessions } from '../data/site';
+import { KIDS, TEENS, DAYS, PHONE_HREF, CLUB_NAME, sessions } from '../data/site';
 
 const all = [
   ...KIDS.flatMap((k) => sessions(k.name, k.sessions).map((s) => ({ ...s, group: 'kids' }))),
@@ -11,7 +11,7 @@ const groups = [['kids', 'Kids'], ['teens', 'Teens'], ['all', 'Everything']];
 const DEFAULT = 'kids';
 ---
 <Layout
-  title="Timetable & Free Trial — North Shore Martial Arts Club, Cremorne"
+  title={`Timetable & Free Trial — ${CLUB_NAME}, Cremorne`}
   description="Weekly class timetable for kids martial arts and teens boxing, kickboxing and MMA in Cremorne. Tap any session to request a free trial."
 >
   <section class="wrap tt-head rise">

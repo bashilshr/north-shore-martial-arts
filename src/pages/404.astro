@@ -1,8 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { PROGRAMS, programHref } from '../data/site';
+import { PROGRAMS, CLUB_NAME, programHref } from '../data/site';
 ---
-<Layout title="Page not found — North Shore Martial Arts Club" description="This page doesn't exist. Find kids martial arts, kickboxing, boxing and self defence classes in Cremorne.">
+<Layout title={`Page not found — ${CLUB_NAME}`} description="This page doesn't exist. Find kids martial arts, kickboxing, boxing and self defence classes in Cremorne.">
   <section class="wrap tt-head rise">
     <p class="eyebrow">404 · Page not found</p>
     <h1 class="display">Missed the<br>target.</h1>

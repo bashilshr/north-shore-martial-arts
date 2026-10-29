@@ -3,7 +3,7 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import BookingSheet from '../components/BookingSheet.astro';
-import { PHONE, ADDRESS, FACEBOOK } from '../data/site';
+import { PHONE, ADDRESS, FACEBOOK, CLUB_NAME, CLUB_SHORT } from '../data/site';
 
 interface Props {
   title: string;
@@ -19,7 +19,8 @@ const ogImage = new URL(image, site).href;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SportsActivityLocation',
-  name: 'North Shore Martial Arts Club',
+  name: CLUB_NAME,
+  alternateName: CLUB_SHORT,
   url: site.href,
   telephone: PHONE,
   image: ogImage,

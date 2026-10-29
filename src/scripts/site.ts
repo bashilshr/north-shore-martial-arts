@@ -51,49 +51,90 @@ document.querySelectorAll<HTMLAnchorElement>('a[data-smooth]').forEach((a) => {
   });
 });
 
-/* ---------- Programs carousel (drag + flick with spring settle) ---------- */
+/* ---------- Programs carousel (pinned scroll-through + drag/flick, spring settle) ---------- */
+// When the section fits on screen it is pinned (CSS sticky): page scroll moves the cards
+// sideways 1:1, and the page only carries on once the last card is in view. Dragging and
+// the arrow buttons move the scroll position inside that pinned range, so cards and page
+// can't drift apart. If the section doesn't fit (short screens) or motion is reduced,
+// nothing is pinned and the cards move only by drag/buttons.
 function initCarousel(vp: HTMLElement) {
   const track = vp.querySelector<HTMLElement>('[data-car-track]')!;
+  const section = vp.closest<HTMLElement>('[data-programs]');
+  const pin = section?.querySelector<HTMLElement>('[data-programs-pin]');
   const prev = document.querySelector<HTMLButtonElement>('[data-car-prev]');
   const next = document.querySelector<HTMLButtonElement>('[data-car-next]');
-  const c = { x: 0, min: 0, down: false, dragging: false, startX: 0, originX: 0, pointerId: 0, hist: [] as [number, number][], raf: 0 };
+  const c = { x: 0, v: 0, zeta: 1, offset: 0, min: 0, pinned: false, down: false, dragging: false, startX: 0, originX: 0, pointerId: 0, hist: [] as [number, number][], raf: 0, last: 0 };
 
   const bounds = () => { c.min = Math.min(0, vp.clientWidth - track.scrollWidth); };
   const apply = (x: number) => { c.x = x; track.style.transform = `translate3d(${x}px,0,0)`; };
+  const clamp = (x: number) => Math.max(c.min, Math.min(0, x));
   const rubber = (x: number) => {
     const k = 0.55, dim = vp.clientWidth || 800;
     if (x > 0) return (x * dim * k) / (dim + k * x);
     if (x < c.min) { const o = c.min - x; return c.min - (o * dim * k) / (dim + k * o); }
     return x;
   };
-  const spring = (target: number, v0: number, zeta: number) => {
-    cancelAnimationFrame(c.raf);
-    if (reduceMotion.matches) { apply(target); return; }
+
+  // Pinned range starts when the section's top reaches the top of the screen.
+  const pinStart = () => section!.getBoundingClientRect().top + window.scrollY;
+  const scrolled = () => -section!.getBoundingClientRect().top; // px into the pinned range
+  const target = () => (c.pinned ? clamp(-scrolled()) : clamp(c.offset));
+
+  const step = (now: number) => {
+    const dt = Math.min(0.032, (now - c.last) / 1000); c.last = now;
+    const goal = target();
     const w = (2 * Math.PI) / 0.4;
-    let x = c.x, v = v0, last = performance.now();
-    const step = (now: number) => {
-      const dt = Math.min(0.032, (now - last) / 1000); last = now;
-      const dx = x - target;
-      v += (-w * w * dx - 2 * zeta * w * v) * dt;
-      x += v * dt;
-      if (Math.abs(dx) < 0.3 && Math.abs(v) < 5) { apply(target); return; }
-      apply(x);
-      c.raf = requestAnimationFrame(step);
-    };
+    const dx = c.x - goal;
+    c.v += (-w * w * dx - 2 * c.zeta * w * c.v) * dt;
+    const x = c.x + c.v * dt;
+    if (Math.abs(dx) < 0.3 && Math.abs(c.v) < 5) { apply(goal); c.v = 0; c.zeta = 1; c.raf = 0; return; }
+    apply(x);
     c.raf = requestAnimationFrame(step);
   };
+  const run = () => {
+    if (c.down) return;
+    if (reduceMotion.matches) { apply(target()); return; }
+    if (!c.raf) { c.last = performance.now(); c.raf = requestAnimationFrame(step); }
+  };
+  const stop = () => { cancelAnimationFrame(c.raf); c.raf = 0; };
+  // Show the track at x. Pinned: jump the scroll position within the pinned range (the
+  // section is stuck there, so only the cards visibly move, easing over via the spring).
+  const goTo = (x: number) => {
+    if (c.pinned) window.scrollTo(0, pinStart() - clamp(x));
+    else c.offset = clamp(x);
+    run();
+  };
+
+  let lastW = 0, lastH = 0;
+  const layout = () => {
+    // Mobile browsers resize the viewport a little as the address bar shows/hides; ignore that.
+    if (innerWidth === lastW && Math.abs(innerHeight - lastH) < 120) { bounds(); run(); return; }
+    lastW = innerWidth; lastH = innerHeight;
+    if (section && pin) {
+      section.classList.remove('is-pinned');
+      section.style.removeProperty('--pin-dist');
+    }
+    bounds();
+    const fits = !!pin && pin.scrollHeight + 60 + 8 <= innerHeight; // 60 = compact nav bar
+    c.pinned = !!section && fits && c.min < 0 && !reduceMotion.matches;
+    if (c.pinned) {
+      section!.style.setProperty('--pin-dist', `${-c.min}px`);
+      section!.classList.add('is-pinned');
+      c.offset = 0;
+    }
+    run();
+  };
+
   let suppressClickUntil = 0;
   vp.addEventListener('click', (e) => {
     if (performance.now() < suppressClickUntil) { e.preventDefault(); e.stopPropagation(); }
   }, true);
-  const clamp = (x: number) => Math.max(c.min, Math.min(0, x));
-  const by = (dir: number) => { bounds(); spring(clamp(c.x - dir * 394), 0, 1); };
 
   vp.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    cancelAnimationFrame(c.raf);
+    stop();
     bounds();
-    c.down = true; c.dragging = false; c.pointerId = e.pointerId;
+    c.down = true; c.dragging = false; c.v = 0; c.pointerId = e.pointerId;
     c.originX = e.clientX; c.startX = e.clientX - c.x;
     c.hist = [[e.clientX, performance.now()]];
   });
@@ -113,7 +154,7 @@ function initCarousel(vp: HTMLElement) {
   const end = () => {
     if (!c.down) return;
     c.down = false;
-    if (!c.dragging) { if (c.x > 0 || c.x < c.min) spring(clamp(c.x), 0, 1); return; }
+    if (!c.dragging) { goTo(c.x); return; }
     c.dragging = false;
     vp.classList.remove('is-dragging');
     // Swallow the click that follows a drag so the card under the pointer doesn't open.
@@ -124,10 +165,10 @@ function initCarousel(vp: HTMLElement) {
     if (Math.abs(v) < 60) v = 0;
     const d = 0.998;
     const projected = c.x + ((v / 1000) * d) / (1 - d);
-    const target = clamp(projected);
     // A small bounce only after a real flick that lands inside the bounds.
-    const zeta = Math.abs(v) > 400 && target === projected ? 0.8 : 1;
-    spring(target, v, zeta);
+    c.zeta = Math.abs(v) > 400 && clamp(projected) === projected ? 0.8 : 1;
+    c.v = v;
+    goTo(projected);
   };
   vp.addEventListener('pointerup', end);
   vp.addEventListener('pointercancel', end);
@@ -139,13 +180,18 @@ function initCarousel(vp: HTMLElement) {
     bounds();
     vp.scrollLeft = 0;
     const vpBox = vp.getBoundingClientRect(), box = card.getBoundingClientRect();
-    if (box.left < vpBox.left + 16) spring(clamp(c.x + (vpBox.left + 16 - box.left)), 0, 1);
-    else if (box.right > vpBox.right - 16) spring(clamp(c.x - (box.right - vpBox.right + 16)), 0, 1);
+    if (box.left < vpBox.left + 16) goTo(c.x + (vpBox.left + 16 - box.left));
+    else if (box.right > vpBox.right - 16) goTo(c.x - (box.right - vpBox.right + 16));
   });
 
-  prev?.addEventListener('click', () => by(-1));
-  next?.addEventListener('click', () => by(1));
-  window.addEventListener('resize', () => { bounds(); apply(clamp(c.x)); });
+  prev?.addEventListener('click', () => { bounds(); goTo(target() + 394); });
+  next?.addEventListener('click', () => { bounds(); goTo(target() - 394); });
+  window.addEventListener('scroll', run, { passive: true });
+  window.addEventListener('resize', layout);
+  window.addEventListener('load', () => { lastW = 0; layout(); }); // card sizes settle once fonts load
+  reduceMotion.addEventListener('change', () => { lastW = 0; layout(); });
+  layout();
+  apply(target());
 }
 document.querySelectorAll<HTMLElement>('[data-carousel]').forEach(initCarousel);
 

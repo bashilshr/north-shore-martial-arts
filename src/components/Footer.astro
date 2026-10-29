@@ -1,5 +1,5 @@
 ---
-import { PROGRAMS, KIDS, PHONE, PHONE_HREF, ADDRESS, FACEBOOK, programHref } from '../data/site';
+import { PROGRAMS, KIDS, PHONE, PHONE_HREF, ADDRESS, FACEBOOK, CLUB_NAME, CLUB_SHORT, programHref } from '../data/site';
 ---
 <footer class="footer">
   <div class="wrap footer__cols">
@@ -23,10 +23,10 @@ import { PROGRAMS, KIDS, PHONE, PHONE_HREF, ADDRESS, FACEBOOK, programHref } fro
     </div>
   </div>
   <div class="wrap footer__word" aria-hidden="true">
-    <p data-reveal>North Shore</p>
+    <p data-reveal>{CLUB_SHORT}</p>
   </div>
   <div class="wrap footer__base">
-    <span>© {new Date().getFullYear()} North Shore Martial Arts Club</span>
+    <span>© {new Date().getFullYear()} {CLUB_NAME}</span>
     <span>Courage · Respect · Integrity · Loyalty</span>
   </div>
 </footer>

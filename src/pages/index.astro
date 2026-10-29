@@ -1,9 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { PROGRAMS, VALUES, STATS, STEPS, QUOTES, AFFILIATIONS, PHONE, PHONE_HREF, img, programHref } from '../data/site';
+import { PROGRAMS, VALUES, STATS, STEPS, QUOTES, AFFILIATIONS, PHONE, PHONE_HREF, CLUB_NAME, img, programHref } from '../data/site';
 ---
 <Layout
-  title="North Shore Martial Arts Club — Cremorne"
+  title={`${CLUB_NAME} — Cremorne`}
   description="Kids martial arts, kickboxing, boxing and self defence on Military Road, Cremorne, led by Hall of Fame instructor Master Steven Tran. Book a free trial."
 >
   <!-- HERO -->
@@ -48,7 +48,7 @@ import { PROGRAMS, VALUES, STATS, STEPS, QUOTES, AFFILIATIONS, PHONE, PHONE_HREF
   <!-- MANIFESTO -->
   <section class="wrap grid-auto manifesto">
     <div class="stack" data-reveal style="gap:28px">
-      <p class="eyebrow">What is North Shore Martial Arts</p>
+      <p class="eyebrow">What is {CLUB_NAME}</p>
       <h2 class="display h2">A club where kids find their feet and adults find their fight.</h2>
       <p class="lead">Structured, fun and educational. Four age-graded kids programs with coloured belts so every child has a next goal in reach, and adult sessions built around technique first, fitness fast.</p>
       <a class="btn btn--outline" href="/kids-martial-arts/" style="align-self:flex-start">Kids classes →</a>
@@ -61,12 +61,13 @@ import { PROGRAMS, VALUES, STATS, STEPS, QUOTES, AFFILIATIONS, PHONE, PHONE_HREF
   </section>
 
   <!-- PROGRAMS -->
-  <section class="programs" id="programs" aria-labelledby="programs-title">
+  <section class="programs" id="programs" aria-labelledby="programs-title" data-programs>
+    <div class="programs__pin" data-programs-pin>
     <div class="wrap programs__head" data-reveal>
       <div class="stack" style="gap:14px">
         <p class="eyebrow">Our programs</p>
         <h2 class="display h2" id="programs-title">Five ways in.</h2>
-        <p class="programs__hint">Drag to browse · tap a card for details</p>
+        <p class="programs__hint">Scroll or drag to browse · tap a card for details</p>
       </div>
       <div class="btn-row" style="gap:8px">
         <button class="icon-btn" type="button" aria-label="Previous programs" data-car-prev>←</button>
@@ -88,6 +89,7 @@ import { PROGRAMS, VALUES, STATS, STEPS, QUOTES, AFFILIATIONS, PHONE, PHONE_HREF
           </a>
         ))}
       </div>
+    </div>
     </div>
   </section>
 
