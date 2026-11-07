@@ -132,7 +132,8 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
     </div>
 
     <div class="wrap footer__word" aria-hidden="true" data-reveal>
-      {'NSMMAC'.split('').map((ch, i) => <span style={`--i:${i}`}>{ch}</span>)}
+      <span class="emblem emblem--word"></span>
+      {'NSMMAC'.split('').map((ch, i) => <span class="footer__letter" style={`--i:${i + 1}`}>{ch}</span>)}
     </div>
 
     <div class="wrap footer__base">

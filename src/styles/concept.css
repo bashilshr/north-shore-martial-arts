@@ -372,13 +372,13 @@ input { font: inherit; }
   container-type: inline-size; display: flex; justify-content: space-between; overflow: hidden; padding-top: 8px; user-select: none;
   font-weight: 800; letter-spacing: -0.04em;
 }
-.footer__word span {
-  display: inline-block; font-size: 21cqw; line-height: 0.82; /* sized to the row, so the word always fits edge to edge */ background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.02) 85%);
+.footer__letter {
+  display: inline-block; font-size: 17.5cqw; line-height: 0.82; /* sized to the row, so the word always fits edge to edge */ background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.02) 85%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   transform: translate3d(0, 60%, 0); transition: transform 1000ms var(--ease); transition-delay: calc(var(--i) * 70ms);
 }
 .js .footer__word[data-reveal] { opacity: 1; transform: none; }
-.footer__word.is-in span, html:not(.js) .footer__word span { transform: translate3d(0, 12%, 0); }
+.footer__word.is-in .footer__letter, html:not(.js) .footer__letter { transform: translate3d(0, 12%, 0); }
 
 .footer__base {
   display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
@@ -400,7 +400,7 @@ input { font: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   .next__live, .map-card__pin, .next__list.is-live li { animation: none !important; }
-  .footer__word span { transition: none; transform: translate3d(0, 12%, 0); }
+  .footer__letter { transition: none; transform: translate3d(0, 12%, 0); }
 }
 
 /* Concept badge: says what this is and links back to the same page on the current design */
@@ -748,4 +748,33 @@ input { font: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   .chat__bubble, .chat__typing, .chat__status, .chat__typing i, .avatar, .chat__who { animation: none !important; }
+}
+
+/* ---------- Club emblem: painted in with a brush sweep ----------
+   A conic mask opens clockwise from the thick end of the brush stroke (bottom-left), so the
+   ring looks like it's being painted in one stroke. --sweep is animated via @property. */
+@property --sweep { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.emblem {
+  --sweep: 0deg;
+  display: block; aspect-ratio: 720 / 770; pointer-events: none;
+  background: url("/brand/emblem.webp") center / contain no-repeat;
+  -webkit-mask-image: conic-gradient(from 205deg, #000 calc(var(--sweep) - 14deg), transparent var(--sweep));
+  mask-image: conic-gradient(from 205deg, #000 calc(var(--sweep) - 14deg), transparent var(--sweep));
+}
+@keyframes cSweep { from { --sweep: 0deg; } to { --sweep: 374deg; } }
+@keyframes cBreathe { 0%, 100% { scale: 1; rotate: 0deg; } 50% { scale: 1.025; rotate: -1.5deg; } }
+
+/* Hero: a big, faint emblem paints itself in behind the headline, then breathes */
+.hero--collage { position: relative; isolation: isolate; }
+.emblem--hero {
+  position: absolute; z-index: -1; left: 50%; top: 72px; width: min(86vw, 600px); translate: -50% 0;
+  opacity: 0.13; animation: cSweep 1700ms 200ms cubic-bezier(0.55, 0.1, 0.25, 1) forwards, cBreathe 9s 2s ease-in-out infinite;
+}
+
+/* Footer: the emblem paints in (full gold) as the NSMMAC letters rise */
+.emblem--word { flex: none; width: 12.5cqw; align-self: center; margin-right: 1cqw; }
+.footer__word.is-in .emblem--word, html:not(.js) .emblem--word { animation: cSweep 1400ms 150ms cubic-bezier(0.55, 0.1, 0.25, 1) forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .emblem { --sweep: 374deg; animation: none !important; }
 }
