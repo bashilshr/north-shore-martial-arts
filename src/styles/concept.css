@@ -864,7 +864,7 @@ input { font: inherit; }
 @keyframes cBreathe { 0%, 100% { scale: 1; rotate: 0deg; } 50% { scale: 1.025; rotate: -1.5deg; } }
 
 /* Hero: a big, faint emblem paints itself in behind the headline, then breathes */
-.hero--collage { position: relative; isolation: isolate; }
+.hero--collage { position: relative; isolation: isolate; overflow-x: clip; } /* the phone collage is wider than the screen; never let it widen the page (mobile browsers zoom out to fit) */
 .emblem--hero {
   position: absolute; z-index: -1; left: 50%; top: 72px; width: min(86vw, 600px); translate: -50% 0;
   opacity: 0.13; animation: cSweep 1700ms 200ms cubic-bezier(0.55, 0.1, 0.25, 1) forwards, cBreathe 9s 2s ease-in-out infinite;
