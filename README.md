@@ -27,23 +27,13 @@ npm run build     # outputs static files to dist/
 npm run preview   # serve the built dist/
 ```
 
-## Photos (kept out of this repo)
+## Photos
 
-The club's photos and affiliation logos are **not committed**. Keep them in a private folder next to the repo, using the same filenames as the WordPress uploads:
+The club's photos and affiliation logos are **committed in `public/images/`**, using the same filenames as the WordPress uploads, so every build (including Cloudflare's Git builds) has them.
 
-```
-Takewondo/
-  photos/   <- the images (private, never committed)
-  site/     <- this repo
-```
-
-`npm run dev` and `npm run build` copy them into `public/images/` first. That folder is git-ignored.
-
-- To use a different folder, set `PHOTOS_DIR=/path/to/photos`.
+- To add or replace a photo, put it in `public/images/` and commit it.
+- Optional: if a `../photos` folder exists next to the repo (or `PHOTOS_DIR` is set), `npm run dev` and `npm run build` copy its images into `public/images/` first. `npm run images` downloads the originals from the current WordPress site into that folder.
 - Any image that's missing shows a labelled placeholder.
-- `npm run images` tries to download the files from the current site. The host's bot protection currently blocks it, so copy them in by hand from the WordPress media library. The script lists the exact filenames.
-
-When deploying, build on a machine that has the photos folder (or give your CI host the photos some other way). Otherwise the deployed site will show placeholders.
 
 ## Free-trial booking form
 
@@ -60,7 +50,7 @@ Hosted as a static-assets Worker, set up the same way as jojolapa. See `wrangler
 - Unknown paths get `404.html` with a real 404 status.
 - `public/_headers` sets the cache rules.
 
-**Deploy from this machine (includes photos):**
+**Deploy from this machine:**
 
 ```sh
 npx wrangler login   # once
@@ -69,7 +59,7 @@ npm run deploy       # build + wrangler deploy → https://north-shore-martial-a
 
 **Auto-deploy from GitHub (like jojolapa):** in the Cloudflare dashboard, go to **Workers & Pages → north-shore-martial-arts → Settings → Build → Connect** and pick the repo. Use build command `npm run build` and deploy command `npx wrangler deploy`.
 
-The photos aren't in the repo, so Git builds will show placeholders until the photos are stored somewhere Cloudflare can reach.
+The photos are committed in `public/images/`, so Git builds include them.
 
 **Custom domain:** once the domain's DNS is on Cloudflare, uncomment `routes` in `wrangler.jsonc` and deploy.
 

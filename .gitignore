@@ -15,8 +15,6 @@ dist/
 .env.*
 !.env.example
 
-# Club photos are private: they live in ../photos and are copied in at build time
-public/images/
 
 # Logs
 npm-debug.log*

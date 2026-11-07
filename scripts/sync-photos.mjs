@@ -1,6 +1,6 @@
-// Copies photos from the private photos folder (outside this repo) into public/images/,
-// which is git-ignored. Runs automatically before `npm run dev` and `npm run build`.
-// Folder defaults to ../photos; override with PHOTOS_DIR=/path/to/photos.
+// Optional: copies photos from a working folder outside the repo (../photos by default, or PHOTOS_DIR)
+// into public/images/, which is committed. Runs before `npm run dev` and `npm run build`; if the folder
+// isn't there (e.g. on Cloudflare's build machines) it does nothing and the committed images are used.
 import { cp, mkdir, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +14,7 @@ let files = [];
 try {
   files = (await readdir(src)).filter((f) => /\.(jpe?g|png|webp|avif|gif|svg)$/i.test(f));
 } catch {
-  console.warn(`[photos] ${src} not found; pages will show placeholders.`);
+  console.log(`[photos] no ${src} folder; using the images committed in public/images.`);
 }
 for (const f of files) await cp(resolve(src, f), resolve(dest, f));
-console.log(`[photos] ${files.length} file(s) copied from ${src}`);
+if (files.length) console.log(`[photos] ${files.length} file(s) copied from ${src}`);
