@@ -71,7 +71,10 @@ export const PROGRAMS: Program[] = [
 ];
 
 export const programHref = (p: Program) => `/${p.slug}/`;
-export const img = (file: string) => `/images/${file}`;
+// Photos are cached for a day (public/_headers). Bump PHOTO_VERSION when photos are added or replaced, so
+// browsers fetch them fresh instead of reusing an old copy (or an old "not found" from before they existed).
+export const PHOTO_VERSION = '2';
+export const img = (file: string) => `/images/${file}?v=${PHOTO_VERSION}`;
 
 export function sessions(name: string, raw: RawSession[]): Session[] {
   return raw.map(([d, time, note]) => ({
