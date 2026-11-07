@@ -19,6 +19,19 @@ const DRIFT = [0.22, 0.1, 0, 0.1, 0.22];
 // Belt colours for the values section, in grading order.
 const BELTS = ['#f7f5ef', '#f2c230', '#2e9b58', '#1d1d1f'];
 
+// Head instructor "fighter card" stats and career timeline (facts from the club's own copy).
+const CARD_STATS = [
+  { value: STATS[0].value, label: 'Hall of Fame', plus: false },
+  { value: STATS[1].value, label: 'Kids programs', plus: false },
+  { value: STATS[2].value, label: 'Classes a week', plus: true },
+];
+const TIMELINE = [
+  { when: 'Career', title: 'World champion', text: 'Taekwondo and Kickboxing.' },
+  { when: '2019', title: 'Australasian Martial Arts Hall of Fame', text: 'Inducted for lifetime achievement in martial arts.' },
+  { when: '2019', title: 'World Karate Union Hall of Fame', text: 'A second induction the same year.' },
+  { when: 'Today', title: 'Head instructor, Cremorne', text: 'Teaching kids from 3 and adults of every level.' },
+];
+
 // Avatar colours for the testimonial thread.
 const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
 ---
@@ -106,7 +119,7 @@ const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
     <div class="belt-panel" data-reveal>
       <div class="belt-panel__head">
         <p class="eyebrow">What we teach beyond technique</p>
-        <h2 class="h2">Four values, every class.</h2>
+        <h2 class="h2">Four values, <em class="accent">every class.</em></h2>
         <p class="body">Like a belt, they're earned one at a time, and kept for life.</p>
       </div>
       <div class="belt" data-belt>
@@ -125,25 +138,51 @@ const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
     </div>
   </section>
 
-  <!-- INSTRUCTOR -->
-  <section class="wrap split section">
-    <div class="photo photo--square" data-reveal data-label="Master Steven Tran, Hall of Fame induction">
-      <img src={img('master-tran-being-awarded-hall-of-fame-4.jpg')} alt="Master Steven Tran receiving his Hall of Fame award" loading="lazy" data-c-parallax>
+  <!-- INSTRUCTOR: a collectible "fighter card" that tilts with a holographic foil sheen, plus a career timeline -->
+  <section class="wrap split section coach">
+    <div class="coach__stage" data-reveal>
+      <article class="fcard" data-tilt aria-label="Master Steven Tran, head instructor">
+        <div class="fcard__inner">
+          <div class="fcard__top">
+            <span class="fcard__tag">Head instructor</span>
+            <span class="fcard__no">No. 01</span>
+          </div>
+          <div class="photo fcard__photo" data-label="Master Steven Tran, Hall of Fame induction">
+            <img src={img('master-tran-being-awarded-hall-of-fame-4.jpg')} alt="Master Steven Tran receiving his Hall of Fame award" loading="lazy">
+          </div>
+          <div class="fcard__name">
+            <span>Master</span>
+            <strong>Steven Tran</strong>
+          </div>
+          <dl class="fcard__stats">
+            {CARD_STATS.map((st) => (
+              <div>
+                <dd><span data-count={st.value}>{st.value}</span>{st.plus && <i aria-hidden="true">+</i>}</dd>
+                <dt>{st.label}</dt>
+              </div>
+            ))}
+          </dl>
+          <span class="fcard__emblem" aria-hidden="true"></span>
+        </div>
+        <span class="fcard__holo" aria-hidden="true"></span>
+        <span class="fcard__glare" aria-hidden="true"></span>
+      </article>
     </div>
-    <div class="stack" data-reveal style="--d:120ms">
+
+    <div class="stack coach__copy" data-reveal style="--d:120ms">
       <p class="eyebrow">Head instructor</p>
       <h2 class="h2">Master Steven Tran</h2>
-      <p class="body">World champion in Taekwondo and Kickboxing. Inducted into the Australasian Martial Arts Hall of Fame and the World Karate Union Hall of Fame in 2019 for lifetime achievement in martial arts.</p>
-      <p class="body">Friendly, respectful and firm: his approach to children is what parents mention first.</p>
-      <dl class="stats">
-        {STATS.slice(0, 3).map((st) => (
-          <div class="stats__item">
-            <dt>{st.label}</dt>
-            <dd><span data-count={st.value}>{st.value}</span><span class="stats__plus" aria-hidden="true">+</span></dd>
-          </div>
+      <blockquote class="coach__quote">“Friendly, respectful and firm.”<span>How parents describe him, every time.</span></blockquote>
+      <ol class="timeline" data-reveal>
+        {TIMELINE.map((t, i) => (
+          <li style={`--i:${i}`}>
+            <span class="timeline__when">{t.when}</span>
+            <strong>{t.title}</strong>
+            <span class="timeline__what">{t.text}</span>
+          </li>
         ))}
-      </dl>
-      <a class="pill pill--soft" href={conceptHref('kids-martial-arts')}>Explore kids classes</a>
+      </ol>
+      <a class="pill pill--soft" href={conceptHref('kids-martial-arts')}>Train with Master Tran</a>
     </div>
   </section>
 
@@ -152,7 +191,7 @@ const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
   <section class="wrap split section section--last talk">
     <div class="stack talk__copy" data-reveal>
       <p class="eyebrow">From parents and students</p>
-      <h2 class="h2">Straight from the families who train here.</h2>
+      <h2 class="h2">Straight from the <em class="accent">families</em> who train here.</h2>
       <p class="body">The words people use most: friendly, respectful, firm, and fun.</p>
       <a class="more talk__fb" href={FACEBOOK} rel="noopener">More on our Facebook →</a>
     </div>

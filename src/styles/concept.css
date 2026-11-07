@@ -114,7 +114,6 @@ input { font: inherit; }
 .photo { position: relative; overflow: hidden; border-radius: 18px; background: #e8e8ed; }
 .photo img { width: 100%; height: 100%; object-fit: cover; }
 .photo--hero { aspect-ratio: 4 / 5; max-height: 560px; border-radius: 28px; box-shadow: var(--shadow-lg); }
-.photo--square { aspect-ratio: 1; max-height: 480px; border-radius: 28px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.14); }
 .photo--wide { aspect-ratio: 4 / 3; border-radius: 28px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.14); }
 .is-missing > img { opacity: 0; }
 .is-missing::after {
@@ -338,34 +337,142 @@ input { font: inherit; }
 @keyframes cRow { from { opacity: 0; transform: translate3d(0, 8px, 0); } to { opacity: 1; transform: none; } }
 .next__list.is-live li { animation: cRow 450ms var(--ease) both; animation-delay: calc(var(--i, 0) * 80ms); }
 
-/* Link columns */
-.footer__cols { padding-top: 48px; padding-bottom: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 32px; }
-.footer__col { display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
-.footer__col a span { color: var(--f-faint); }
+/* Bento tiles: contact, kids age chart, adult programs, map banner.
+   Each tile glows softly where the pointer is (--gx/--gy from concept.ts). */
+.bento { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; padding-top: 44px; padding-bottom: 44px; }
+.tile {
+  --gx: 50%; --gy: 0%;
+  position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; gap: 12px;
+  padding: 22px; border-radius: 26px; background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+}
+.tile::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; transition: opacity 400ms ease-out;
+  background: radial-gradient(360px circle at var(--gx) var(--gy), rgba(224, 190, 0, 0.13), transparent 70%);
+}
+.tile:hover::before { opacity: 1; }
 .footer__label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--f-faint); }
-.footer__name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; }
-.map-card {
-  position: relative; display: flex; flex-direction: column; gap: 4px; justify-content: flex-end; min-height: 168px; padding: 20px;
-  border-radius: 22px; overflow: hidden; color: var(--f-fg);
-  background:
-    linear-gradient(0deg, rgba(17, 17, 19, 0.85), rgba(17, 17, 19, 0.2)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 22px),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 22px),
-    #1c1c1f;
+.footer__name { font-size: 19px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; }
+
+/* Club tile */
+.tile__phone { display: inline-flex; align-items: center; gap: 12px; margin-top: auto; font-size: clamp(22px, 2.2vw, 27px); font-weight: 700; letter-spacing: -0.02em; }
+.tile__ring { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 999px; background: var(--accent); color: #fff; box-shadow: 0 8px 20px rgba(180, 38, 31, 0.35); }
+.tile__ring svg { width: 20px; height: 20px; }
+.tile__phone:hover .tile__ring { animation: cRing 700ms ease-in-out; }
+@keyframes cRing { 0%, 100% { rotate: 0deg; } 15% { rotate: -16deg; } 30% { rotate: 14deg; } 45% { rotate: -10deg; } 60% { rotate: 8deg; } 75% { rotate: -4deg; } }
+.tile__social {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px;
+  font-size: 14px; font-weight: 600; background: rgba(255, 255, 255, 0.08); transition: background 150ms ease-out, transform 100ms ease-out;
+}
+.tile__social:hover { background: rgba(255, 255, 255, 0.14); }
+.tile__social:active { transform: scale(0.96); }
+.tile__social span { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 999px; background: #1877f2; color: #fff; }
+.tile__social svg { width: 16px; height: 16px; }
+
+/* Kids age chart */
+.ages { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.ages__row {
+  display: grid; grid-template-columns: 112px minmax(0, 1fr) 58px; align-items: center; gap: 12px;
+  padding: 8px 10px; margin: 0 -10px; border-radius: 12px; transition: background 150ms ease-out;
+}
+.ages__row:hover { background: rgba(255, 255, 255, 0.05); color: var(--f-fg); }
+.ages__name { font-size: 15px; font-weight: 600; white-space: nowrap; }
+.ages__lane { position: relative; height: 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); }
+.ages__bar {
+  position: absolute; top: 0; bottom: 0; border-radius: 999px; background: var(--c);
+  left: calc((var(--from) - 3) / 10 * 100%); width: calc((var(--to) - var(--from)) / 10 * 100%);
+  transform-origin: left; transition: box-shadow 200ms ease-out;
+}
+.ages__row:hover .ages__bar { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08), 0 0 18px var(--c); }
+.ages__yrs { font-size: 13px; color: var(--f-dim); text-align: right; white-space: nowrap; }
+.ages__scale { position: relative; height: 16px; margin: 2px calc(58px + 12px) 0 calc(112px + 12px); border-top: 1px dashed rgba(255, 255, 255, 0.1); }
+.ages__scale span { position: absolute; top: 4px; left: calc((var(--n) - 3) / 10 * 100%); translate: -50% 0; font-size: 11px; color: var(--f-faint); font-variant-numeric: tabular-nums; }
+@keyframes cBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.js .bento .ages__bar { transform: scaleX(0); }
+.js .bento.is-in .ages__bar { animation: cBar 900ms var(--ease) both; }
+.js .bento.is-in .ages li:nth-child(2) .ages__bar { animation-delay: 120ms; }
+.js .bento.is-in .ages li:nth-child(3) .ages__bar { animation-delay: 240ms; }
+.js .bento.is-in .ages li:nth-child(4) .ages__bar { animation-delay: 360ms; }
+
+/* Adults tile */
+.tile__link {
+  display: flex; justify-content: space-between; align-items: center; padding: 9px 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.tile__link:last-child { border-bottom: 0; }
+.tile__link span { color: var(--f-faint); transition: transform 300ms var(--ease), color 200ms ease-out; }
+.tile__link:hover span { transform: translateX(6px); color: #ff8a73; }
+
+/* Visit tile: address + actions beside a live map. The Google map is restyled dark with a CSS filter
+   (inverted, hue rotated back so the red pin stays red) and sits under a "click to explore" layer so it
+   can't trap the page scroll until someone actually wants to use it. */
+.tile--visit {
+  grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.5fr); gap: 22px;
+  align-items: stretch; padding: 14px 14px 14px 26px;
+}
+.visit__info { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 12px 0; }
+.visit__street { margin-top: 2px; font-size: clamp(24px, 2.6vw, 30px); letter-spacing: -0.025em; line-height: 1.1; }
+.visit__suburb { font-size: 16px; color: var(--f-dim); }
+.visit__copy {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 7px; margin-top: 10px; padding: 7px 12px;
+  border: 0; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--f-dim);
+  background: rgba(255, 255, 255, 0.06); transition: background 150ms ease-out, color 150ms ease-out, transform 100ms ease-out;
+}
+.visit__copy svg { width: 14px; height: 14px; }
+.visit__copy:hover { background: rgba(255, 255, 255, 0.12); color: var(--f-fg); }
+.visit__copy:active { transform: scale(0.96); }
+.visit__copy.is-done { background: rgba(48, 209, 88, 0.16); color: #4ade80; }
+.visit__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.visit__actions .pill { font-size: 14px; padding: 10px 16px; min-height: 40px; }
+
+.visit__map {
+  position: relative; min-height: 300px; overflow: hidden; border-radius: 20px; background: #1c1c1f;
   box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.12);
-  transition: transform 150ms ease-out;
 }
-.map-card span:not(.footer__label):not(.map-card__cta):not(.map-card__pin) { color: var(--f-dim); font-size: 15px; }
-.map-card:hover { color: var(--f-fg); transform: translateY(-2px); }
-.map-card:active { transform: scale(0.98); }
-.map-card__pin {
-  position: absolute; top: 18px; right: 18px; width: 40px; height: 40px; display: grid; place-items: center;
-  border-radius: 999px; background: var(--accent); color: #fff; box-shadow: 0 0 0 6px rgba(180, 38, 31, 0.25);
-  animation: cPin 3s ease-in-out infinite;
+.visit__map iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+  filter: invert(0.92) hue-rotate(180deg) saturate(0.55) brightness(0.92) contrast(0.92);
+  transition: filter 500ms ease-out;
 }
-.map-card__pin svg { width: 20px; height: 20px; }
-@keyframes cPin { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
-.map-card__cta { margin-top: 8px; font-size: 15px; font-weight: 600; color: #ff8a73; }
+.visit__map.is-live iframe { filter: invert(0.92) hue-rotate(180deg) saturate(0.8) brightness(1) contrast(0.95); }
+/* Soft vignette so the map melts into the tile */
+.visit__map::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  box-shadow: inset 0 0 60px rgba(17, 17, 19, 0.65); transition: opacity 400ms ease-out;
+}
+.visit__map.is-live::after { opacity: 0.4; }
+.visit__unlock {
+  position: absolute; inset: 0; z-index: 1; display: grid; place-items: end center; padding-bottom: 18px;
+  border: 0; cursor: pointer; background: transparent; color: var(--f-fg); font-size: 13px; font-weight: 600;
+}
+.visit__unlock::before {
+  content: ""; position: absolute; left: 50%; bottom: 14px; translate: -50% 0; width: 220px; height: 36px; border-radius: 999px; z-index: -1;
+  background: rgba(17, 17, 19, 0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.16);
+}
+.visit__unlock span { color: #e0be00; }
+.visit__unlock:hover::before { background: rgba(17, 17, 19, 0.85); }
+.visit__map.is-live .visit__unlock { display: none; }
+
+@media (max-width: 759px) {
+  .tile--visit { grid-template-columns: 1fr; padding: 22px 14px 14px; }
+  .visit__info { padding: 0 8px 4px; }
+  .visit__map { min-height: 260px; }
+}
+
+@media (max-width: 959px) {
+  .bento { grid-template-columns: 1fr 1fr; }
+  .tile--kids { grid-column: 1 / -1; grid-row: 1; }
+}
+@media (max-width: 599px) {
+  .bento { grid-template-columns: 1fr; }
+  .tile--kids { grid-row: auto; }
+  .ages__row { grid-template-columns: 96px minmax(0, 1fr) 52px; gap: 10px; }
+  .ages__scale { margin-left: calc(96px + 10px); margin-right: calc(52px + 10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .bento .ages__bar { transform: none; animation: none !important; }
+  .tile__ring { animation: none !important; }
+}
 
 /* Giant wordmark: letters rise in one by one when it scrolls into view */
 .footer__word {
@@ -395,11 +502,9 @@ input { font: inherit; }
   .footer__base { justify-content: flex-start; flex-direction: column; align-items: flex-start; gap: 6px; }
   .next { padding: 16px; border-radius: 24px; }
   .next__row { grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; }
-  .footer__cols { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
-  .footer__cols > .footer__col:first-child, .footer__cols > .map-card { grid-column: 1 / -1; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .next__live, .map-card__pin, .next__list.is-live li { animation: none !important; }
+  .next__live, .next__list.is-live li { animation: none !important; }
   .footer__letter { transition: none; transform: translate3d(0, 12%, 0); }
 }
 
@@ -527,12 +632,6 @@ input { font: inherit; }
 
 @keyframes cUp { from { opacity: 0; transform: translate3d(0, 18px, 0); } to { opacity: 1; transform: none; } }
 
-/* Count-up stats under the instructor bio */
-.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 6px 0 4px; }
-.stats__item { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 4px; padding: 16px; border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-sm); }
-.stats dt { font-size: 13px; line-height: 1.3; color: var(--tertiary); }
-.stats dd { margin: 0; font-size: clamp(32px, 4vw, 44px); font-weight: 700; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
-.stats__plus { color: var(--accent); font-size: 0.6em; vertical-align: top; margin-left: 2px; }
 
 /* Affiliations, right under the hero: full-colour logo tiles drifting past, fading at the edges. */
 .affiliations { padding: 8px 0 8px; }
@@ -778,3 +877,151 @@ input { font: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .emblem { --sweep: 374deg; animation: none !important; }
 }
+
+/* ---------- Head instructor: collectible "fighter card" + career timeline ----------
+   The card tilts toward the pointer (--rx/--ry from concept.ts), with a holographic gold sheen and
+   a glare that follow the pointer (--mx/--my). On touch screens it sways gently on its own. */
+.coach { align-items: center; gap: clamp(40px, 7vw, 96px); }
+.coach__stage { display: grid; place-items: center; perspective: 1100px; }
+.fcard {
+  --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 30%; --gold: #e0be00;
+  position: relative; width: min(380px, 100%); aspect-ratio: 5 / 7; border-radius: 30px;
+  transform: rotateX(var(--rx)) rotateY(var(--ry)); transform-style: preserve-3d;
+  transition: transform 600ms var(--ease), box-shadow 600ms var(--ease);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  /* gold foil edge */
+  padding: 2px; background: linear-gradient(140deg, #f6e27a, #b8930c 35%, #fff3b0 55%, #a37f00 80%, #f6e27a);
+}
+.fcard.is-tilting { transition: transform 80ms linear, box-shadow 300ms ease-out; box-shadow: 0 50px 90px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.06); }
+.fcard__inner {
+  position: relative; height: 100%; overflow: hidden; border-radius: 28px; padding: 18px;
+  display: flex; flex-direction: column; gap: 14px; color: #f5f5f7;
+  background: radial-gradient(120% 80% at 20% 0%, #2a2a2e, #121214 60%);
+}
+.fcard__top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.fcard__tag { padding: 6px 10px; border-radius: 999px; background: var(--gold); color: #1d1d1f; }
+.fcard__no { color: rgba(245, 245, 247, 0.5); }
+.fcard__photo { flex: 1; min-height: 0; border-radius: 20px; background: #222; transform: translateZ(30px); }
+.fcard__photo img { object-position: 50% 30%; }
+.fcard__name { display: flex; flex-direction: column; line-height: 1; transform: translateZ(40px); }
+.fcard__name span { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
+.fcard__name strong { margin-top: 4px; font-size: clamp(28px, 3vw, 34px); letter-spacing: -0.03em; }
+.fcard__stats { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 12px; }
+.fcard__stats div { display: flex; flex-direction: column; gap: 2px; padding: 0 4px; }
+.fcard__stats div + div { border-left: 1px solid rgba(255, 255, 255, 0.12); padding-left: 12px; }
+.fcard__stats dd { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.fcard__stats dd i { font-style: normal; color: var(--gold); font-size: 0.7em; margin-left: 1px; }
+.fcard__stats dt { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(245, 245, 247, 0.55); }
+.fcard__emblem {
+  position: absolute; right: -40px; bottom: 70px; width: 170px; aspect-ratio: 720 / 770; opacity: 0.12; pointer-events: none;
+  background: url("/brand/emblem.webp") center / contain no-repeat; rotate: -12deg;
+}
+/* Holographic foil + glare, steered by the pointer */
+.fcard__holo, .fcard__glare { position: absolute; inset: 2px; border-radius: 28px; pointer-events: none; transition: opacity 400ms ease-out; }
+.fcard__holo {
+  opacity: 0.18; mix-blend-mode: color-dodge;
+  background:
+    repeating-linear-gradient(115deg, rgba(255, 214, 0, 0) 0%, rgba(255, 214, 0, 0.35) 8%, rgba(120, 220, 255, 0.25) 14%, rgba(255, 120, 200, 0.22) 20%, rgba(255, 214, 0, 0) 28%);
+  background-size: 220% 220%; background-position: var(--mx) var(--my);
+}
+.fcard__glare { opacity: 0; mix-blend-mode: soft-light; background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.75), transparent 45%); }
+.fcard.is-tilting .fcard__holo { opacity: 0.7; }
+.fcard.is-tilting .fcard__glare { opacity: 1; }
+/* Touch screens: a slow idle sway instead of pointer tilt */
+@keyframes cSway { 0%, 100% { transform: rotateX(4deg) rotateY(-8deg); } 50% { transform: rotateX(-3deg) rotateY(8deg); } }
+@media (hover: none) { .fcard { animation: cSway 7s ease-in-out infinite; } }
+
+.coach__copy { max-width: 52ch; }
+.coach__quote { margin: 0; font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.coach__quote span { display: block; margin-top: 6px; font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--tertiary); }
+
+/* Timeline: the rail draws down, then each milestone pops in */
+.timeline { position: relative; display: flex; flex-direction: column; gap: 18px; margin: 6px 0 4px; padding: 0 0 0 28px; list-style: none; }
+.timeline::before {
+  content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; border-radius: 2px;
+  background: linear-gradient(180deg, #e0be00, var(--accent)); transform-origin: top; transform: scaleY(0);
+  transition: transform 1200ms var(--ease) 200ms;
+}
+.timeline li { position: relative; display: flex; flex-direction: column; gap: 2px; }
+.timeline li::before {
+  content: ""; position: absolute; left: -28px; top: 4px; width: 14px; height: 14px; border-radius: 999px;
+  background: var(--surface); box-shadow: inset 0 0 0 3px #e0be00, 0 0 0 4px var(--bg);
+}
+.timeline li:last-child::before { box-shadow: inset 0 0 0 3px var(--accent), 0 0 0 4px var(--bg); background: var(--accent); }
+.timeline__when { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #a8860a; }
+.timeline li:last-child .timeline__when { color: var(--accent); }
+.timeline strong { font-size: 17px; letter-spacing: -0.01em; }
+.timeline__what { font-size: 15px; color: var(--secondary); }
+.js .timeline li { opacity: 0; transform: translate3d(-8px, 0, 0); transition: opacity 500ms ease-out, transform 600ms var(--ease); transition-delay: calc(350ms + var(--i) * 160ms); }
+.timeline.is-in::before, html:not(.js) .timeline::before { transform: scaleY(1); }
+.js .timeline.is-in li { opacity: 1; transform: none; }
+/* this list manages its own entrance */
+.js .timeline[data-reveal] { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fcard { animation: none !important; transition: none; transform: none !important; }
+  .timeline::before { transition: none; transform: scaleY(1); }
+  .js .timeline li { transition: none; opacity: 1; transform: none; }
+}
+
+/* =====================================================================
+   Typography: dojo meets athletics
+   - Archivo, expanded + extra bold (display): wide, heavy, jersey-like headlines
+   - Shippori Mincho B1 (accent): a Japanese mincho serif with brush-ink strokes, for the words with feeling
+   - Atkinson Hyperlegible Next (text): designed by the Braille Institute for legibility, for parents on phones
+   - Atkinson Hyperlegible Mono (labels): small uppercase labels, times and numbers
+   ===================================================================== */
+:root {
+  --font: "Atkinson Hyperlegible Next", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+  --font-display: "Archivo", "Arial Black", system-ui, sans-serif;
+  --font-serif: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
+  --font-mono: "Atkinson Hyperlegible Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* Display: expanded and heavy */
+.h1, .h2, .h3, .h4, .footer__title, .footer__name, .footer__letter, .brand__name strong,
+.program-card__name, .belt__step h3, .timeline strong, .fcard__name strong, .fcard__stats dd,
+.tile__phone, .visit__street, .slot__cls, .tile__link {
+  font-family: var(--font-display); font-stretch: 125%; font-variation-settings: "wdth" 125;
+}
+.h1 { font-size: clamp(34px, 5vw, 62px); font-weight: 850; letter-spacing: -0.035em; line-height: 1.02; }
+.h1--page { font-size: clamp(32px, 4.4vw, 54px); }
+.h2 { font-size: clamp(26px, 3.2vw, 38px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.06; }
+.h3, .h4, .program-card__name, .belt__step h3 { font-weight: 750; letter-spacing: -0.025em; }
+.program-card__name { font-size: 21px; }
+.footer__title { font-size: clamp(32px, 4.1vw, 52px); font-weight: 850; letter-spacing: -0.035em; line-height: 1.04; }
+.footer__letter { font-weight: 900; letter-spacing: -0.04em; font-size: 13.4cqw; }
+.fcard__name strong { font-size: clamp(24px, 2.6vw, 30px); font-weight: 800; letter-spacing: -0.03em; }
+.fcard__stats dd { font-weight: 800; font-size: 24px; }
+.brand__name strong { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
+.tile__link { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+.tile__phone { font-size: clamp(20px, 2vw, 24px); font-weight: 800; letter-spacing: -0.03em; }
+.visit__street { font-size: clamp(22px, 2.3vw, 27px); font-weight: 800; }
+.slot__cls { font-size: 14px; font-weight: 750; letter-spacing: -0.01em; }
+.timeline strong { font-size: 15px; font-weight: 750; letter-spacing: -0.015em; }
+.footer__name { font-size: 16px; font-weight: 800; }
+
+/* Accent words: mincho serif, upright, like ink on paper */
+.accent, .headline__accent, .coach__quote {
+  font-family: var(--font-serif); font-style: normal; font-stretch: normal; font-variation-settings: normal;
+  font-weight: 800; letter-spacing: -0.01em;
+}
+.accent { color: var(--accent); font-size: 1.04em; }
+.footer .accent { color: #ff8a73; }
+.headline__accent { font-size: 1.06em; }
+.coach__quote { font-size: clamp(24px, 2.6vw, 32px); line-height: 1.25; }
+.coach__quote span { font-family: var(--font); font-weight: 500; letter-spacing: 0; }
+
+/* Mono labels */
+.eyebrow, .tag, .label, .footer__label, .timeline__when, .belt__num, .program-card__num, .program-card__tag,
+.fcard__tag, .fcard__no, .fcard__stats dt, .next__head, .next__day, .slot__time, .ages__yrs, .ages__scale span,
+.chat__status, .day h2, .back, .concept-pill {
+  font-family: var(--font-mono); font-weight: 500;
+}
+.eyebrow, .label, .footer__label, .tag, .program-card__tag, .next__head { font-size: 12px; letter-spacing: 0.1em; }
+.eyebrow { font-weight: 600; }
+.day h2 { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.slot__time { font-size: 12px; letter-spacing: 0.02em; }
+.concept-pill { font-size: 12px; letter-spacing: 0.02em; }
+.belt__num, .program-card__num { letter-spacing: 0.08em; }
+.fcard__stats dt { font-size: 10px; letter-spacing: 0.02em; }

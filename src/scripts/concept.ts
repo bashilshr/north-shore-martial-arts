@@ -133,6 +133,68 @@ filter?.addEventListener('click', (e) => {
   week.classList.add('is-shuffled');
 });
 
+/* ---------- Fighter card: tilt toward the pointer, foil sheen + glare follow it ---------- */
+document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((card) => {
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+  let raf = 0;
+  card.addEventListener('pointermove', (e) => {
+    if (!fine.matches || reduce.matches) return;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height; // 0..1
+      card.style.setProperty('--ry', `${((x - 0.5) * 18).toFixed(2)}deg`);
+      card.style.setProperty('--rx', `${((0.5 - y) * 14).toFixed(2)}deg`);
+      card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
+      card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
+      card.classList.add('is-tilting');
+    });
+  });
+  card.addEventListener('pointerleave', () => {
+    cancelAnimationFrame(raf);
+    card.classList.remove('is-tilting'); // eases back flat via the CSS transition
+    card.style.setProperty('--rx', '0deg');
+    card.style.setProperty('--ry', '0deg');
+  });
+});
+
+/* ---------- Footer tiles: a soft glow that follows the pointer ---------- */
+document.querySelectorAll<HTMLElement>('[data-glow]').forEach((tile) => {
+  tile.addEventListener('pointermove', (e) => {
+    const r = tile.getBoundingClientRect();
+    tile.style.setProperty('--gx', `${e.clientX - r.left}px`);
+    tile.style.setProperty('--gy', `${e.clientY - r.top}px`);
+  });
+});
+
+/* ---------- Footer map: click to interact (so it never traps the page scroll) ---------- */
+document.querySelectorAll<HTMLElement>('[data-map]').forEach((map) => {
+  const frame = map.querySelector('iframe');
+  map.querySelector('[data-map-unlock]')?.addEventListener('click', () => {
+    map.classList.add('is-live');
+    frame?.removeAttribute('tabindex');
+    frame?.focus();
+  });
+});
+
+/* ---------- Copy address ---------- */
+document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+  const label = btn.querySelector<HTMLElement>('[data-copy-label]');
+  const original = label?.textContent ?? '';
+  let timer = 0;
+  btn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(btn.dataset.copy || '');
+      btn.classList.add('is-done');
+      if (label) label.textContent = 'Copied ✓';
+    } catch {
+      if (label) label.textContent = btn.dataset.copy || original; // clipboard blocked: show it to copy by hand
+    }
+    clearTimeout(timer);
+    timer = window.setTimeout(() => { btn.classList.remove('is-done'); if (label) label.textContent = original; }, 2200);
+  });
+});
+
 /* ---------- Footer: the next three classes from now, in the club's time zone ---------- */
 const nextList = document.querySelector<HTMLElement>('[data-next]');
 if (nextList) {
