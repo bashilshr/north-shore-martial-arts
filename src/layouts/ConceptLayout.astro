@@ -1,0 +1,100 @@
+---
+// Layout for the light "Apple design" concept pages under /concept/.
+// Shares the club data, booking sheet and client behaviour with the main site; only the look differs.
+import '../styles/concept.css';
+import BookingSheet from '../components/BookingSheet.astro';
+import { PHONE, PHONE_HREF, ADDRESS, FACEBOOK, CLUB_NAME, KIDS, PROGRAMS } from '../data/site';
+import { BASE, CONCEPT_NAV, conceptHref } from '../data/concept';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path of the same page on the current site, for the "back to current design" pill. */
+  current?: string;
+}
+
+const { title, description, current = '/' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const mapsHref = `https://maps.google.com/?q=${encodeURIComponent(`${ADDRESS[0]}, ${ADDRESS[1]}`)}`;
+---
+<!doctype html>
+<html lang="en-AU" class="concept">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f5f5f7">
+  <link rel="icon" type="image/png" href="/logo-mark.png">
+  <script is:inline>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav" data-material>
+    <span class="nav__progress" aria-hidden="true" data-progress></span>
+    <div class="wrap nav__inner">
+      <a class="brand" href={`${BASE}/`} aria-label={`${CLUB_NAME}, home`}>
+        <img src="/logo-mark.png" alt="" width="32" height="34">
+        <span class="brand__name"><strong>North Shore</strong><span>Mixed Martial Arts Club</span></span>
+      </a>
+      <nav class="nav__links" aria-label="Main">
+        {CONCEPT_NAV.map((n) => (
+          <a class="nav__link" href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a>
+        ))}
+        <a class="pill pill--ink nav__call" href={PHONE_HREF}>Call {PHONE}</a>
+      </nav>
+      <div class="nav__narrow">
+        <button class="pill pill--soft nav__toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>Menu</button>
+        <div class="pop" id="menu" data-material>
+          {CONCEPT_NAV.map((n) => (
+            <a class="pop__link" href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a>
+          ))}
+          <a class="pop__call" href={PHONE_HREF}>Call {PHONE}</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <slot />
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__cols">
+      <div class="footer__col">
+        <p class="footer__name">{CLUB_NAME}</p>
+        <p class="muted">{ADDRESS[0]}<br>{ADDRESS[1]}</p>
+        <a class="strong" href={PHONE_HREF}>{PHONE}</a>
+        <a class="muted" href={FACEBOOK} rel="noopener">Facebook</a>
+      </div>
+      <div class="footer__col">
+        <p class="label">Kids</p>
+        {KIDS.map((k) => <a href={`${conceptHref('kids-martial-arts')}#${k.key}`}>{k.name} ({k.ages})</a>)}
+      </div>
+      <div class="footer__col">
+        <p class="label">Adults</p>
+        {PROGRAMS.slice(1).map((p) => <a href={conceptHref(p.slug)}>{p.name}</a>)}
+      </div>
+      <a class="map-card" href={mapsHref} rel="noopener">
+        <span class="label">Find us</span>
+        <strong>{ADDRESS[0]}</strong>
+        <span class="muted">{ADDRESS[1]}</span>
+        <span class="map-card__cta">Open in Maps →</span>
+      </a>
+    </div>
+  </footer>
+
+  <a class="concept-pill" href={current} data-material>
+    <span class="concept-pill__dot" aria-hidden="true"></span>
+    Concept preview<span class="concept-pill__sep" aria-hidden="true">·</span><span class="concept-pill__back">Current design →</span>
+  </a>
+
+  <BookingSheet />
+  <script>
+    import '../scripts/site.ts';
+    import '../scripts/concept.ts';
+  </script>
+</body>
+</html>

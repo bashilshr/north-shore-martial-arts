@@ -10,6 +10,30 @@ document.querySelectorAll<HTMLImageElement>('[data-label] > img').forEach((el) =
   else el.addEventListener('error', () => markMissing(el), { once: true });
 });
 
+/* ---------- Theme: dark (default) / light, remembered per visitor ---------- */
+const themeToggles = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+const themeMeta = document.querySelector<HTMLMetaElement>('meta[data-theme-color]');
+function syncThemeUi() {
+  const light = root.getAttribute('data-theme') === 'light';
+  themeToggles.forEach((b) => {
+    if (b.hasAttribute('aria-label')) b.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
+  });
+  document.querySelectorAll('[data-theme-label]').forEach((el) => { el.textContent = light ? 'Dark theme' : 'Light theme'; });
+  themeMeta?.setAttribute('content', light ? '#f3f1ec' : '#171717');
+}
+themeToggles.forEach((b) => b.addEventListener('click', () => {
+  const light = root.getAttribute('data-theme') !== 'light';
+  if (!reduceMotion.matches) {
+    root.classList.add('theme-anim');
+    window.setTimeout(() => root.classList.remove('theme-anim'), 350);
+  }
+  if (light) root.setAttribute('data-theme', 'light');
+  else root.removeAttribute('data-theme');
+  try { localStorage.setItem('nsmmac-theme', light ? 'light' : 'dark'); } catch { /* storage blocked */ }
+  syncThemeUi();
+}));
+syncThemeUi();
+
 /* ---------- Nav: compact + material once scrolled, hero parallax ---------- */
 const parallax = document.querySelector<HTMLElement>('[data-parallax]');
 function onScroll() {

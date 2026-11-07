@@ -1,0 +1,158 @@
+---
+import ConceptLayout from '../../layouts/ConceptLayout.astro';
+import { PROGRAMS, QUOTES, AFFILIATIONS, STATS, PHONE_HREF, CLUB_NAME, img } from '../../data/site';
+import { COLORS, VALUE_NOTES, HERO_IMAGE, conceptHref } from '../../data/concept';
+
+const HEADLINE = ['Martial', 'arts', 'for', 'the'];
+const HEADLINE_ACCENT = ['whole', 'family.'];
+
+// Hero collage: 5 columns, centre column first. Outer columns sit lower and drift up faster on scroll.
+const COLLAGE = [
+  [{ file: 'kids-group-204.jpg', label: 'Kids group', shape: 'tall' }, { file: 'boxing-1-1.jpg', label: 'Boxing', shape: 'square' }],
+  [{ file: 'kickboxing273-500.jpg', label: 'Kickboxing', shape: 'square' }, { file: 'girls-kicking-high-029.jpg', label: 'High kicks', shape: 'tall' }],
+  [{ file: HERO_IMAGE, label: 'Kids class', shape: 'hero' }, { file: 'master-tran-being-awarded-hall-of-fame-4.jpg', label: 'Master Tran', shape: 'square' }],
+  [{ file: 'boxing-4-1.jpg', label: 'Boxing pads', shape: 'tall' }, { file: 'kids-martial-arts-lined-up-016.jpg', label: 'Kids lined up', shape: 'square' }],
+  [{ file: 'self-defence-3-1.jpg', label: 'Self defence', shape: 'square' }, { file: 'childrens-martialarts-1.jpg', label: 'Kids training', shape: 'tall' }],
+];
+const DRIFT = [0.22, 0.1, 0, 0.1, 0.22];
+
+// Belt colours for the values section, in grading order.
+const BELTS = ['#f7f5ef', '#f2c230', '#2e9b58', '#1d1d1f'];
+---
+<ConceptLayout
+  title={`${CLUB_NAME} — Cremorne (concept)`}
+  description="Concept: a light, Apple-style design for the club site."
+  current="/"
+>
+  <!-- HERO: centred headline over a fan of class photos that drift apart as you scroll -->
+  <section class="hero hero--collage">
+    <div class="wrap stack hero__copy">
+      <p class="eyebrow rise">Cremorne, NSW · Military Road</p>
+      <h1 class="h1 headline" aria-label="Martial arts for the whole family.">
+        {HEADLINE.map((w, i) => <span class="w" aria-hidden="true" style={`--i:${i}`}>{w} </span>)}
+        <span class="headline__accent" aria-hidden="true">
+          {HEADLINE_ACCENT.map((w, i) => <span class="w" style={`--i:${HEADLINE.length + i}`}>{w}{i === 0 ? ' ' : ''}</span>)}
+          <svg class="scribble" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 60 6, 120 4, 180 9 S 270 18, 296 8" pathLength="1" /></svg>
+        </span>
+      </h1>
+      <p class="lead rise" style="animation-delay:520ms">Kids programs from 3 to 13, and kickboxing, boxing, self defence and personal training for adults, taught by Hall of Fame instructor Master Steven Tran.</p>
+      <div class="row rise" style="animation-delay:620ms">
+        <a class="pill pill--accent pill--lg" href={conceptHref('timetable')}>See timetable &amp; book a class</a>
+        <a class="pill pill--soft pill--lg" href={PHONE_HREF}>Call the club</a>
+      </div>
+      <p class="fine rise" style="animation-delay:700ms">First class is free. Bookings essential.</p>
+    </div>
+    <div class="collage" role="img" aria-label="Classes at the club: kids martial arts, kickboxing, boxing, self defence and Master Steven Tran">
+      {COLLAGE.map((col, c) => (
+        <div class={`collage__col collage__col--${c}`} data-drift={DRIFT[c]}>
+          {col.map((t, r) => (
+            <div class={`photo collage__tile collage__tile--${t.shape}`} data-label={t.label} style={`--d:${Math.abs(c - 2) * 120 + r * 90}ms`}>
+              <img src={img(t.file)} alt="" fetchpriority={c === 2 && r === 0 ? 'high' : undefined} loading={c === 2 ? undefined : 'lazy'}>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- AFFILIATIONS: logo tiles drifting past, right under the hero -->
+  <section class="affiliations rise" style="animation-delay:900ms" aria-labelledby="aff-title">
+    <p class="wrap label" id="aff-title">Affiliated with</p>
+    <ul class="sr-only">{AFFILIATIONS.map((a) => <li>{a.name}</li>)}</ul>
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        {[0, 1].map(() => AFFILIATIONS.map((a) => (
+          <span class="logo-tile" data-label={a.name} title={a.name}>
+            <img src={img(a.file)} alt="" loading="lazy">
+          </span>
+        )))}
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="programs" id="programs" aria-labelledby="programs-title" data-programs>
+    <div class="programs__pin" data-programs-pin>
+    <div class="wrap programs__head" data-reveal>
+      <h2 class="h2" id="programs-title">Programs</h2>
+    </div>
+    <div class="carousel" data-carousel>
+      <div class="carousel__track" data-car-track>
+        {PROGRAMS.map((p, i) => (
+          <a class="program-card" href={conceptHref(p.slug)} draggable="false" style={`--tone:${COLORS[p.id]}`}>
+            <div class="photo program-card__photo" data-label={p.imgLabel} style={`view-transition-name:prog-${p.id}`}><img src={img(p.img)} alt="" loading="lazy" draggable="false"></div>
+            <span class="program-card__num" aria-hidden="true">0{i + 1}</span>
+            <span class="program-card__go" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </span>
+            <div class="program-card__body">
+              <p class="program-card__tag"><span class="program-card__dot"></span>{p.ages}</p>
+              <h3 class="program-card__name">{p.name}</h3>
+              <p class="program-card__blurb">{p.blurb}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="wrap section">
+    <div class="belt-panel" data-reveal>
+      <div class="belt-panel__head">
+        <p class="eyebrow">What we teach beyond technique</p>
+        <h2 class="h2">Four values, every class.</h2>
+        <p class="body">Like a belt, they're earned one at a time, and kept for life.</p>
+      </div>
+      <div class="belt" data-belt>
+        <div class="belt__track" aria-hidden="true"><div class="belt__fill"></div></div>
+        <ol class="belt__steps">
+          {VALUE_NOTES.map((v, i) => (
+            <li class="belt__step" style={`--c:${BELTS[i]}`}>
+              <span class="belt__node" aria-hidden="true"></span>
+              <span class="belt__num" aria-hidden="true">0{i + 1}</span>
+              <h3 class="h3">{v.name}</h3>
+              <p>{v.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTRUCTOR -->
+  <section class="wrap split section">
+    <div class="photo photo--square" data-reveal data-label="Master Steven Tran, Hall of Fame induction">
+      <img src={img('master-tran-being-awarded-hall-of-fame-4.jpg')} alt="Master Steven Tran receiving his Hall of Fame award" loading="lazy" data-c-parallax>
+    </div>
+    <div class="stack" data-reveal style="--d:120ms">
+      <p class="eyebrow">Head instructor</p>
+      <h2 class="h2">Master Steven Tran</h2>
+      <p class="body">World champion in Taekwondo and Kickboxing. Inducted into the Australasian Martial Arts Hall of Fame and the World Karate Union Hall of Fame in 2019 for lifetime achievement in martial arts.</p>
+      <p class="body">Friendly, respectful and firm: his approach to children is what parents mention first.</p>
+      <dl class="stats">
+        {STATS.slice(0, 3).map((st) => (
+          <div class="stats__item">
+            <dt>{st.label}</dt>
+            <dd><span data-count={st.value}>{st.value}</span><span class="stats__plus" aria-hidden="true">+</span></dd>
+          </div>
+        ))}
+      </dl>
+      <a class="pill pill--soft" href={conceptHref('kids-martial-arts')}>Explore kids classes</a>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="wrap section section--last">
+    <h2 class="h2">From parents and students</h2>
+    <div class="grid grid--3">
+      {QUOTES.map((q, i) => (
+        <figure class="card quote" data-reveal style={`--d:${i * 90}ms`}>
+          <blockquote>“{q.text}”</blockquote>
+          <figcaption>{q.name} <span>· {q.role}</span></figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+</ConceptLayout>

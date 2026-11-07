@@ -1,0 +1,58 @@
+---
+import ConceptLayout from '../../layouts/ConceptLayout.astro';
+import { KIDS, TEENS, DAYS, PHONE_HREF, CLUB_NAME, sessions } from '../../data/site';
+import { COLORS } from '../../data/concept';
+
+const all = [
+  ...KIDS.flatMap((k) => sessions(k.name, k.sessions).map((s) => ({ ...s, group: 'kids', color: COLORS[k.key!] }))),
+  ...sessions(TEENS.name, TEENS.sessions).map((s) => ({ ...s, group: 'teens', color: COLORS.teens })),
+];
+const week = DAYS.map((day) => ({ day, sessions: all.filter((s) => s.dayLong === day) }));
+const groups = [['kids', 'Kids'], ['teens', 'Teens'], ['all', 'Everything']];
+const DEFAULT = 'kids';
+---
+<ConceptLayout
+  title={`Timetable & Free Trial — ${CLUB_NAME} (concept)`}
+  description="Concept: weekly class timetable. Tap any session to request a free trial."
+  current="/timetable/"
+>
+  <section class="wrap page-head stack rise">
+    <p class="eyebrow">Timetable</p>
+    <h1 class="h1 h1--page">Pick a class. We'll hold a spot.</h1>
+    <p class="lead">Tap any session to request a free trial. Bookings are essential and the timetable can change, so we'll confirm by phone.</p>
+    <div class="segmented" role="group" aria-label="Filter classes" data-tt-filter>
+      {groups.map(([g, label]) => (
+        <button type="button" data-group={g} aria-pressed={g === DEFAULT ? 'true' : 'false'}>{label}</button>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap week" data-tt-week aria-live="polite">
+    {week.map((d, di) => {
+      const visible = d.sessions.filter((s) => s.group === DEFAULT).length;
+      return (
+        <div class="day">
+          <h2>{d.day}</h2>
+          {d.sessions.map((s, si) => (
+            <button style={`--i:${di + si}`} class="slot" type="button" data-book data-cls={s.cls} data-when={s.when} data-group={s.group} hidden={s.group !== DEFAULT}>
+              <span class="slot__time" style={`color:${s.color}`}>{s.time}</span>
+              <span class="slot__cls">{s.cls}</span>
+              {s.note && <span class="slot__note">{s.note}</span>}
+            </button>
+          ))}
+          <div class="day__empty" hidden={visible > 0}>No classes</div>
+        </div>
+      );
+    })}
+  </section>
+
+  <section class="wrap section section--last">
+    <div class="card card--pad cta">
+      <div class="stack stack--tight">
+        <h2 class="h4">Adults: Krav Maga, MMA, Boxing, Kickboxing</h2>
+        <p class="body">Adult and teen sessions run by appointment around the kids timetable.</p>
+      </div>
+      <a class="pill pill--ink" href={PHONE_HREF}>Call to arrange</a>
+    </div>
+  </section>
+</ConceptLayout>

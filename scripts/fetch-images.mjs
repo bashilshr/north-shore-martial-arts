@@ -30,6 +30,7 @@ const FILES = [
   '2019/07/australian-jujitsu-logo.png',
   '2019/07/austr-sport-commission.png',
   '2019/07/boxing-australia.png',
+  '2019/07/fun-fresh-active-kids-2.jpg',
   '2019/07/girls-kicking-high-029.jpg',
   '2019/07/kids-group-204.jpg',
   '2019/07/kids-martial-arts-lined-up-016.jpg',

@@ -1,0 +1,86 @@
+---
+import ConceptLayout from '../../layouts/ConceptLayout.astro';
+import { PROGRAMS, PHONE, PHONE_HREF, CLUB_NAME, img, programHref, sessions, type Program, type Level } from '../../data/site';
+import { COLORS, BASE, conceptHref } from '../../data/concept';
+
+export function getStaticPaths() {
+  return PROGRAMS.map((program) => ({ params: { slug: program.slug }, props: { program } }));
+}
+
+const { program } = Astro.props as { program: Program };
+const levels: Level[] = program.levels ?? [program.level!];
+const hasTabs = levels.length > 1;
+const others = PROGRAMS.filter((p) => p.id !== program.id);
+---
+<ConceptLayout title={`${program.title} — ${CLUB_NAME} (concept)`} description={program.description} current={programHref(program)}>
+  <section class="wrap page-head">
+    <a class="back" href={`${BASE}/#programs`}>← All programs</a>
+    <div class="split">
+      <div class="stack rise">
+        <p class="eyebrow" style={`color:${COLORS[program.id]}`}>{program.ages}</p>
+        <h1 class="h1 h1--page">{program.title}</h1>
+        <p class="lead">{program.intro}</p>
+        <div class="row">
+          <a class="pill pill--accent" href={conceptHref('timetable')}>Book a free trial</a>
+          <a class="pill pill--soft" href={PHONE_HREF}>Call {PHONE}</a>
+        </div>
+      </div>
+      <div class="photo photo--wide unmask" data-label={program.heroLabel} style={`view-transition-name:prog-${program.id}`}>
+        <img src={img(program.hero)} alt={program.heroLabel} fetchpriority="high" data-c-parallax>
+      </div>
+    </div>
+  </section>
+
+  {hasTabs && (
+    <section class="wrap tabs-row">
+      <div class="segmented" role="tablist" aria-label="Choose an age group" data-level-tabs>
+        {levels.map((l, i) => (
+          <button type="button" role="tab" id={`tab-${l.key}`} aria-controls={`level-${l.key}`} aria-selected={i === 0 ? 'true' : 'false'} data-key={l.key}>{l.name} · {l.ages}</button>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {levels.map((l, i) => {
+    const list = sessions(l.key ? l.name : program.name, l.sessions);
+    return (
+      <section class="wrap grid grid--2 level" id={hasTabs ? `level-${l.key}` : undefined} role={hasTabs ? 'tabpanel' : undefined} aria-labelledby={hasTabs ? `tab-${l.key}` : undefined} hidden={i !== 0}>
+        <div class="card card--pad stack">
+          {hasTabs && <p class="tag" style={`color:${COLORS[l.key!]}`}>{l.ages}</p>}
+          <h2 class="h3">{l.name}</h2>
+          <p class="body">{l.text}</p>
+          <ul class="bullets">{l.points.map((pt) => <li>{pt}</li>)}</ul>
+          {l.footnote && <p class="muted">{l.footnote}</p>}
+        </div>
+        <div class="stack">
+          <div class="card card--pad stack">
+            <h2 class="h4">This week</h2>
+            {list.length > 0 ? (
+              <div class="sessions">
+                {list.map((s, k) => (
+                  <button class="session" type="button" data-book data-cls={s.cls} data-when={s.when} style={`--i:${k}`}>
+                    <span><strong>{s.day} · {s.time}</strong>{s.note && <small>{s.note}</small>}</span>
+                    <span class="more">Book →</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p class="body">Sessions are arranged by appointment. Call <a class="strong" href={PHONE_HREF}>{PHONE}</a> and we'll find a time that suits you.</p>
+            )}
+          </div>
+          <div class="gallery">
+            <div class="photo" data-label="Class photo"><img src={img(program.g1)} alt={`${program.name} class`} loading="lazy"></div>
+            <div class="photo" data-label="Class photo"><img src={img(program.g2)} alt={`${program.name} class`} loading="lazy"></div>
+          </div>
+        </div>
+      </section>
+    );
+  })}
+
+  <section class="wrap section section--last">
+    <p class="label">Other programs</p>
+    <ul class="chips">
+      {others.map((o) => <li><a class="chip chip--link" href={conceptHref(o.slug)}>{o.name} →</a></li>)}
+    </ul>
+  </section>
+</ConceptLayout>
