@@ -132,3 +132,81 @@ filter?.addEventListener('click', (e) => {
   void week.offsetWidth; // restart the CSS animation
   week.classList.add('is-shuffled');
 });
+
+/* ---------- Footer: the next three classes from now, in the club's time zone ---------- */
+const nextList = document.querySelector<HTMLElement>('[data-next]');
+if (nextList) {
+  type Slot = { d: number; start: number; time: string; note: string; cls: string; when: string };
+  const slots: Slot[] = JSON.parse(nextList.dataset.sessions || '[]');
+  const WEEK = 7 * 1440;
+  const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  // "Now" in Sydney as minutes since Monday 00:00, whatever the visitor's own time zone.
+  const sydneyNow = () => {
+    const parts = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
+    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+    const day = Math.max(0, DAY_NAMES.indexOf(get('weekday').slice(0, 3)));
+    return day * 1440 + Number(get('hour')) * 60 + Number(get('minute'));
+  };
+
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+
+  let lastKey = '';
+  const render = () => {
+    const now = sydneyNow();
+    const upcoming = slots
+      .map((s) => ({ s, wait: (s.d * 1440 + s.start - now + WEEK) % WEEK || WEEK }))
+      .sort((a, b) => a.wait - b.wait)
+      .slice(0, 3);
+    const key = upcoming.map(({ s, wait }) => s.when + Math.floor((now % 1440 + wait) / 1440)).join('|');
+    if (key === lastKey) return; // only redraw (and re-animate) when the list actually changes
+    lastKey = key;
+    nextList.innerHTML = upcoming.map(({ s, wait }, i) => {
+      const dayOffset = Math.floor((now % 1440 + wait) / 1440);
+      const label = dayOffset === 0 ? 'Today' : dayOffset === 1 ? 'Tmrw' : DAY_NAMES[s.d];
+      return `<li style="--i:${i}"><button class="next__row" type="button" data-book data-cls="${esc(s.cls)}" data-when="${esc(s.when)}">`
+        + `<span class="next__day${dayOffset === 0 ? ' is-today' : ''}">${label}</span>`
+        + `<span class="next__info"><strong>${esc(s.cls)}</strong><small>${esc(s.time)}${s.note ? ' · ' + esc(s.note) : ''}</small></span>`
+        + `<span class="next__go" aria-hidden="true">Book</span></button></li>`;
+    }).join('');
+    nextList.classList.add('is-live');
+  };
+  render();
+  setInterval(render, 60_000);
+}
+
+/* ---------- Testimonial thread: typing… → message, one after another, then the visitor's reply ---------- */
+const chat = document.querySelector<HTMLElement>('[data-chat]');
+if (chat) {
+  const msgs = [...chat.querySelectorAll<HTMLElement>('.chat__msg')];
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const showAll = () => msgs.forEach((m) => { m.classList.remove('is-typing'); m.classList.add('is-shown', 'is-delivered'); });
+
+  const play = async () => {
+    for (const m of msgs) {
+      const mine = m.classList.contains('chat__msg--me');
+      if (!mine) {
+        m.classList.add('is-typing');
+        // Longer quotes "type" a little longer, within reason.
+        const len = m.querySelector('.chat__bubble')?.textContent?.length ?? 80;
+        await wait(Math.min(1500, 650 + len * 4));
+        m.classList.remove('is-typing');
+      } else {
+        await wait(500);
+      }
+      m.classList.add('is-shown');
+      if (mine) { await wait(700); m.classList.add('is-delivered'); }
+      await wait(mine ? 0 : 450);
+    }
+  };
+
+  if (reduce.matches) showAll();
+  else {
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      play();
+    }, { threshold: 0.35 });
+    io.observe(chat);
+  }
+}

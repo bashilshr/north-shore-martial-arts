@@ -1,6 +1,6 @@
 ---
 import ConceptLayout from '../../layouts/ConceptLayout.astro';
-import { PROGRAMS, QUOTES, AFFILIATIONS, STATS, PHONE_HREF, CLUB_NAME, img } from '../../data/site';
+import { PROGRAMS, QUOTES, AFFILIATIONS, STATS, PHONE_HREF, FACEBOOK, CLUB_NAME, img } from '../../data/site';
 import { COLORS, VALUE_NOTES, HERO_IMAGE, conceptHref } from '../../data/concept';
 
 const HEADLINE = ['Martial', 'arts', 'for', 'the'];
@@ -18,6 +18,9 @@ const DRIFT = [0.22, 0.1, 0, 0.1, 0.22];
 
 // Belt colours for the values section, in grading order.
 const BELTS = ['#f7f5ef', '#f2c230', '#2e9b58', '#1d1d1f'];
+
+// Avatar colours for the testimonial thread.
+const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
 ---
 <ConceptLayout
   title={`${CLUB_NAME} — Cremorne (concept)`}
@@ -144,15 +147,38 @@ const BELTS = ['#f7f5ef', '#f2c230', '#2e9b58', '#1d1d1f'];
   </section>
 
   <!-- TESTIMONIALS -->
-  <section class="wrap section section--last">
-    <h2 class="h2">From parents and students</h2>
-    <div class="grid grid--3">
-      {QUOTES.map((q, i) => (
-        <figure class="card quote" data-reveal style={`--d:${i * 90}ms`}>
-          <blockquote>“{q.text}”</blockquote>
-          <figcaption>{q.name} <span>· {q.role}</span></figcaption>
-        </figure>
-      ))}
+  <!-- Testimonials as a message thread: each quote "types" in, then the visitor's own reply is the CTA -->
+  <section class="wrap split section section--last talk">
+    <div class="stack talk__copy" data-reveal>
+      <p class="eyebrow">From parents and students</p>
+      <h2 class="h2">Straight from the families who train here.</h2>
+      <p class="body">The words people use most: friendly, respectful, firm, and fun.</p>
+      <a class="more talk__fb" href={FACEBOOK} rel="noopener">More on our Facebook →</a>
+    </div>
+
+    <div class="phone" data-reveal style="--d:120ms">
+      <div class="phone__bar" aria-hidden="true">
+        <span class="phone__avatars">
+          {QUOTES.map((q, i) => <span class="avatar avatar--sm" style={`--a:${AVATAR[i]}`}>{q.name[0]}</span>)}
+        </span>
+        <span class="phone__title">Parents &amp; students</span>
+      </div>
+      <ol class="chat" data-chat>
+        {QUOTES.map((q, i) => (
+          <li class="chat__msg">
+            <span class="avatar" style={`--a:${AVATAR[i]}`} aria-hidden="true">{q.name[0]}</span>
+            <figure class="chat__body">
+              <figcaption class="chat__who">{q.name} <span>· {q.role}</span></figcaption>
+              <span class="chat__typing" aria-hidden="true"><i></i><i></i><i></i></span>
+              <blockquote class="chat__bubble">{q.text}</blockquote>
+            </figure>
+          </li>
+        ))}
+        <li class="chat__msg chat__msg--me">
+          <a class="chat__bubble chat__bubble--me" href={conceptHref('timetable')}>Can I book a free trial? →</a>
+          <span class="chat__status" aria-hidden="true">Delivered</span>
+        </li>
+      </ol>
     </div>
   </section>
 </ConceptLayout>

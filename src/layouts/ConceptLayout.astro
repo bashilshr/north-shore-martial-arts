@@ -3,7 +3,7 @@
 // Shares the club data, booking sheet and client behaviour with the main site; only the look differs.
 import '../styles/concept.css';
 import BookingSheet from '../components/BookingSheet.astro';
-import { PHONE, PHONE_HREF, ADDRESS, FACEBOOK, CLUB_NAME, KIDS, PROGRAMS } from '../data/site';
+import { PHONE, PHONE_HREF, ADDRESS, FACEBOOK, CLUB_NAME, KIDS, TEENS, PROGRAMS, DAYS, type RawSession } from '../data/site';
 import { BASE, CONCEPT_NAV, conceptHref } from '../data/concept';
 
 interface Props {
@@ -16,6 +16,21 @@ interface Props {
 const { title, description, current = '/' } = Astro.props;
 const path = Astro.url.pathname.replace(/\/?$/, '/');
 const mapsHref = `https://maps.google.com/?q=${encodeURIComponent(`${ADDRESS[0]}, ${ADDRESS[1]}`)}`;
+
+// Every timetabled session with its start time in minutes, for the footer's "Next classes" card.
+// Times look like '3.40–4.20pm', '9.45–10.15am' or '11.45am–12.25pm': the start takes the end's am/pm if it has none.
+function startMinutes(time: string) {
+  const [a, b = ''] = time.split('–');
+  const suffix = (a.match(/am|pm/) ?? b.match(/am|pm/) ?? ['am'])[0];
+  const [h, m = '0'] = a.replace(/am|pm/, '').split('.');
+  let hour = Number(h) % 12;
+  if (suffix === 'pm') hour += 12;
+  return hour * 60 + Number(m);
+}
+const toNext = (cls: string, raw: RawSession[]) =>
+  raw.map(([d, time, note]) => ({ d, start: startMinutes(time), time, note, cls, when: `${DAYS[d]} ${time}${note ? ' · ' + note : ''}` }));
+const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext(TEENS.name, TEENS.sessions)]
+  .sort((x, y) => x.d - y.d || x.start - y.start);
 ---
 <!doctype html>
 <html lang="en-AU" class="concept">
@@ -62,27 +77,68 @@ const mapsHref = `https://maps.google.com/?q=${encodeURIComponent(`${ADDRESS[0]}
   </main>
 
   <footer class="footer">
+    <!-- Closing CTA + the next classes on the timetable (worked out live in Sydney time by concept.ts) -->
+    <div class="wrap footer__cta">
+      <div class="stack footer__pitch" data-reveal>
+        <p class="eyebrow eyebrow--glow">Free trial</p>
+        <h2 class="footer__title">Your first class<br>is on us.</h2>
+        <p class="footer__lead">Pick any session and we'll hold a spot. Not sure which class fits? Call and we'll help you choose.</p>
+        <div class="row">
+          <a class="pill pill--accent pill--lg" href={conceptHref('timetable')}>Book a free trial</a>
+          <a class="pill pill--glass pill--lg" href={PHONE_HREF}>Call {PHONE}</a>
+        </div>
+      </div>
+      <div class="next" data-reveal style="--d:120ms">
+        <p class="next__head"><span class="next__live" aria-hidden="true"></span>Next classes</p>
+        <ul class="next__list" data-next data-sessions={JSON.stringify(NEXT_DATA)}>
+          {NEXT_DATA.slice(0, 3).map((s) => (
+            <li>
+              <button class="next__row" type="button" data-book data-cls={s.cls} data-when={s.when}>
+                <span class="next__day">{DAYS[s.d].slice(0, 3)}</span>
+                <span class="next__info"><strong>{s.cls}</strong><small>{s.time}{s.note ? ` · ${s.note}` : ''}</small></span>
+                <span class="next__go" aria-hidden="true">Book</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <a class="next__all" href={conceptHref('timetable')}>Full timetable →</a>
+      </div>
+    </div>
+
     <div class="wrap footer__cols">
       <div class="footer__col">
+        <p class="footer__label">The club</p>
         <p class="footer__name">{CLUB_NAME}</p>
-        <p class="muted">{ADDRESS[0]}<br>{ADDRESS[1]}</p>
-        <a class="strong" href={PHONE_HREF}>{PHONE}</a>
-        <a class="muted" href={FACEBOOK} rel="noopener">Facebook</a>
+        <a href={PHONE_HREF}>{PHONE}</a>
+        <a href={FACEBOOK} rel="noopener">Facebook</a>
       </div>
       <div class="footer__col">
-        <p class="label">Kids</p>
-        {KIDS.map((k) => <a href={`${conceptHref('kids-martial-arts')}#${k.key}`}>{k.name} ({k.ages})</a>)}
+        <p class="footer__label">Kids</p>
+        {KIDS.map((k) => <a href={`${conceptHref('kids-martial-arts')}#${k.key}`}>{k.name} <span>{k.ages}</span></a>)}
       </div>
       <div class="footer__col">
-        <p class="label">Adults</p>
+        <p class="footer__label">Adults</p>
         {PROGRAMS.slice(1).map((p) => <a href={conceptHref(p.slug)}>{p.name}</a>)}
       </div>
       <a class="map-card" href={mapsHref} rel="noopener">
-        <span class="label">Find us</span>
+        <span class="map-card__pin" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        </span>
+        <span class="footer__label">Visit</span>
         <strong>{ADDRESS[0]}</strong>
-        <span class="muted">{ADDRESS[1]}</span>
+        <span>{ADDRESS[1]}</span>
         <span class="map-card__cta">Open in Maps →</span>
       </a>
+    </div>
+
+    <div class="wrap footer__word" aria-hidden="true" data-reveal>
+      {'NSMMAC'.split('').map((ch, i) => <span style={`--i:${i}`}>{ch}</span>)}
+    </div>
+
+    <div class="wrap footer__base">
+      <span>© {new Date().getFullYear()} {CLUB_NAME}</span>
+      <span class="footer__values">Courage · Respect · Integrity · Loyalty</span>
+      <a class="footer__top" href="#main" data-smooth>Back to top ↑</a>
     </div>
   </footer>
 
