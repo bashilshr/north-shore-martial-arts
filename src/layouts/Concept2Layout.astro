@@ -1,0 +1,155 @@
+---
+// Concept 2 layout: bold, colour-blocked design previewed at /concept-2/ (not indexed).
+// Shares content (site.ts) and behaviour (site.ts script: booking sheet, tabs, timetable filter,
+// reveals) with the main site; look and motion are its own (concept2.css, concept2.ts).
+import '../styles/concept2.css';
+import BookingSheet from '../components/BookingSheet.astro';
+import Btn from '../components/c2/Btn.astro';
+import { PHONE, PHONE_HREF, ADDRESS, FACEBOOK, CLUB_NAME, PROGRAMS, img } from '../data/site';
+import { C2, c2Href, c2Program, HERO_PHOTO } from '../data/concept2';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+const { title, description, image = img(HERO_PHOTO) } = Astro.props;
+const site = Astro.site ?? new URL('https://www.northshoremixedmartialartsclub.com.au');
+const ogImage = new URL(image, site).href;
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+
+const LINKS = [
+  { label: 'Kids', href: c2Href('kids-martial-arts/') },
+  { label: 'Timetable', href: c2Href('timetable/') },
+];
+const fullAddress = `${ADDRESS[0]}, ${ADDRESS[1]}`;
+const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`;
+---
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0f0f0f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo-mark.png">
+  <!-- js: enables the curtain + reveal styles. The timeout lifts the curtain even if the module script fails. -->
+  <script is:inline>document.documentElement.classList.add('js');setTimeout(function(){document.documentElement.setAttribute('data-c2-ready','')},2500);</script>
+</head>
+<body class="c2">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Page curtain: lifts on load, drops back in before moving to another concept page -->
+  <div class="c2-curtain" aria-hidden="true">
+    <span class="c2-curtain__mark"><img src="/logo-mark.png" alt="" width="60" height="64"></span>
+  </div>
+  <div class="c2-outro" aria-hidden="true"></div>
+
+  <header class="c2-nav" data-c2-nav>
+    <a class="c2-brand" href={C2} aria-label={`${CLUB_NAME}, home`}>
+      <img src="/logo-mark.png" alt="" width="34" height="36">
+      <span><strong>North Shore</strong><small>Martial Arts Club</small></span>
+    </a>
+
+    <nav class="c2-nav__links" aria-label="Main">
+      <button class="c2-link c2-link--menu" type="button" aria-expanded="false" aria-controls="c2-mega" data-c2-mega-trigger>
+        Programs <span class="c2-link__chev" aria-hidden="true"></span>
+      </button>
+      {LINKS.map((l) => <a class="c2-link" href={l.href} aria-current={path === l.href ? 'page' : undefined}>{l.label}</a>)}
+      <a class="c2-link" href={PHONE_HREF}>{PHONE}</a>
+    </nav>
+
+    <div class="c2-nav__end">
+      <Btn class="c2-nav__cta" href={c2Href('timetable/')} variant="ghost" label="Free trial" />
+      <button class="c2-burger" type="button" aria-expanded="false" aria-controls="c2-menu" aria-label="Menu" data-c2-burger>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Programs mega menu (desktop) -->
+    <div class="c2-mega" id="c2-mega" data-c2-mega>
+      {PROGRAMS.map((p, i) => (
+        <a class="c2-mega__card" href={c2Program(p)} style={`--i:${i}`}>
+          <span class="c2-mega__photo" data-label={p.imgLabel}><img src={img(p.img)} alt="" loading="lazy"></span>
+          <span class="c2-mega__name">{p.name}</span>
+          <span class="c2-mega__ages">{p.ages}</span>
+        </a>
+      ))}
+    </div>
+  </header>
+
+  <!-- Full-screen menu (narrow screens) -->
+  <div class="c2-menu" id="c2-menu" data-c2-menu-panel>
+    <ul class="c2-menu__list">
+      {[...PROGRAMS.map((p) => ({ label: p.name, href: c2Program(p) })), { label: 'Timetable', href: c2Href('timetable/') }].map((l, i) => (
+        <li style={`--i:${i}`}><a class="c2-menu__link" href={l.href}>{l.label}</a></li>
+      ))}
+    </ul>
+    <div class="c2-menu__foot">
+      <a href={PHONE_HREF}>Call {PHONE}</a>
+      <span>{ADDRESS.join(', ')}</span>
+    </div>
+  </div>
+
+  <main id="main">
+    <slot />
+  </main>
+
+  <footer class="c2-footer">
+    <div class="c2-wrap c2-footer__grid">
+      <div class="c2-footer__brand">
+        <img src="/logo-full.png" alt={CLUB_NAME} width="180" height="88" loading="lazy">
+        <p>Your first class is on us. Pick any session and we'll hold a spot.</p>
+        <Btn href={c2Href('timetable/')} label="Book a free trial" />
+      </div>
+      <div>
+        <p class="c2-title">Programs</p>
+        <ul class="c2-footer__list">
+          {PROGRAMS.map((p) => <li><a href={c2Program(p)}>{p.name}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <p class="c2-title">Club</p>
+        <ul class="c2-footer__list">
+          <li><a href={c2Href('timetable/')}>Timetable</a></li>
+          <li><a href={c2Href('kids-martial-arts/#minicubs')}>Kids by age</a></li>
+          <li><a href={PHONE_HREF}>{PHONE}</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="c2-title">Visit</p>
+        <address class="c2-footer__list">
+          <span>{ADDRESS[0]}</span>
+          <span>{ADDRESS[1]}</span>
+          <a href={directionsHref} rel="noopener">Get directions →</a>
+        </address>
+      </div>
+    </div>
+    <div class="c2-wrap c2-footer__social">
+      <a href={FACEBOOK} rel="noopener">Facebook</a>
+      <a href={PHONE_HREF}>Call</a>
+      <a href={directionsHref} rel="noopener">Directions</a>
+    </div>
+    <div class="c2-wrap c2-footer__base">
+      <span>© {new Date().getFullYear()} {CLUB_NAME}</span>
+      <span>Courage · Respect · Integrity · Loyalty</span>
+      <a href="/">Design concept 2 · View the current site</a>
+    </div>
+  </footer>
+
+  <BookingSheet />
+  <script>
+    import '../scripts/site.ts';
+    import '../scripts/concept2.ts';
+  </script>
+</body>
+</html>

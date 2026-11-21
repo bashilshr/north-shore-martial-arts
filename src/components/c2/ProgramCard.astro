@@ -1,0 +1,22 @@
+---
+// Tall photo card for the program rail: photo, a wave in the program's light tone, name and ages.
+import { img, type Program } from '../../data/site';
+import { TONES, c2Program, toneStyle } from '../../data/concept2';
+
+interface Props { program: Program; index: number }
+const { program: p, index } = Astro.props;
+---
+<a class="c2-pcard" href={c2Program(p)} style={toneStyle(TONES[p.id])} draggable="false">
+  <span class="c2-pcard__photo" data-label={p.imgLabel}>
+    <img src={img(p.img)} alt="" loading="lazy" draggable="false">
+  </span>
+  <span class="c2-pcard__num" aria-hidden="true">0{index + 1}</span>
+  <svg class="c2-pcard__wave" viewBox="0 0 400 220" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path d="M0 64C70 20 150 10 230 44S360 92 400 60V220H0Z" fill="currentColor" />
+  </svg>
+  <span class="c2-pcard__body">
+    <span class="c2-title">{p.name}</span>
+    <span class="c2-pcard__ages">{p.ages}</span>
+    <span class="c2-pcard__go">Explore</span>
+  </span>
+</a>

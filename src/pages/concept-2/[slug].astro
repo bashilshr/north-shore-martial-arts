@@ -1,0 +1,124 @@
+---
+import Layout from '../../layouts/Concept2Layout.astro';
+import Btn from '../../components/c2/Btn.astro';
+import Lines from '../../components/c2/Lines.astro';
+import Wave from '../../components/c2/Wave.astro';
+import ProgramCard from '../../components/c2/ProgramCard.astro';
+import { PROGRAMS, PHONE, PHONE_HREF, CLUB_NAME, img, sessions, type Program, type Level } from '../../data/site';
+import { TONES, KIDS_SLIDES, c2Href, toneStyle } from '../../data/concept2';
+
+export function getStaticPaths() {
+  return PROGRAMS.map((program) => ({ params: { slug: program.slug }, props: { program } }));
+}
+
+const { program } = Astro.props as { program: Program };
+const levels: Level[] = program.levels ?? [program.level!];
+const hasTabs = levels.length > 1;
+const others = PROGRAMS.filter((p) => p.id !== program.id);
+const [first, ...rest] = program.title.split(' ');
+const titleLines = rest.length ? [first, rest.join(' ')] : [first];
+// Intro: first sentence in full ink, the rest dimmed.
+const cut = program.intro.indexOf('. ') + 1;
+const introLead = cut > 0 ? program.intro.slice(0, cut) : program.intro;
+const introRest = cut > 0 ? program.intro.slice(cut) : '';
+---
+<Layout title={`${program.title} — ${CLUB_NAME} (Concept 2)`} description={program.description} image={img(program.hero)}>
+  <header class="c2-hero c2-hero--page" style={toneStyle(TONES[program.id])}>
+    <div class="c2-hero__media" data-label={program.heroLabel} data-c2-parallax="0.25">
+      <img src={img(program.hero)} alt="" fetchpriority="high">
+    </div>
+    <div class="c2-hero__copy">
+      <p class="c2-kicker c2-hero__rise">{program.ages}</p>
+      <Lines as="h1" class="c2-h1" lines={titleLines} fade={9} />
+      <div class="c2-row c2-row--center c2-hero__rise">
+        <Btn href="#classes" variant="light" label="Book a free trial" data-smooth />
+        <Btn href={PHONE_HREF} variant="ghost" label={`Call ${PHONE}`} />
+      </div>
+    </div>
+    <Wave />
+  </header>
+
+  <section class="c2-wrap c2-center c2-pintro">
+    <a class="c2-back" href={c2Href('#programs')}>← All programs</a>
+    <p class="c2-statement" data-reveal><b>{introLead}</b>{introRest}</p>
+  </section>
+
+  {hasTabs && (
+    <div class="c2-wrap c2-center" id="classes">
+      <div class="c2-pills" role="tablist" aria-label="Choose an age group" data-level-tabs>
+        {levels.map((l, i) => (
+          <button type="button" role="tab" id={`tab-${l.key}`} aria-controls={`level-${l.key}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-key={l.key}>
+            {l.name}<small>{l.ages}</small>
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {levels.map((l, i) => {
+    const list = sessions(l.key ? l.name : program.name, l.sessions);
+    const tone = TONES[l.key ?? program.id];
+    const photo = l.key ? KIDS_SLIDES[l.key].file : program.g1;
+    return (
+      <section class="c2-wrap c2-level level" id={hasTabs ? `level-${l.key}` : 'classes'} role={hasTabs ? 'tabpanel' : undefined} aria-labelledby={hasTabs ? `tab-${l.key}` : undefined} hidden={i !== 0} style={toneStyle(tone)}>
+        <div class="c2-split c2-split--static">
+          <span class="c2-split__media" data-label={`${l.name} class`}><img src={img(photo)} alt={`${l.name} class`} loading="lazy"></span>
+          <div class="c2-split__body">
+            <span class="c2-kicker">{l.kicker} · {l.ages}</span>
+            <h2 class="c2-h2">{l.name}</h2>
+            <p class="c2-split__text">{l.text}</p>
+            <ul class="c2-plus">{l.points.map((pt) => <li>{pt}</li>)}</ul>
+            {l.footnote && <p class="c2-split__note">{l.footnote}</p>}
+          </div>
+        </div>
+
+        <div class="c2-sessions">
+          <div class="c2-sessions__head">
+            <h3 class="c2-title">This week</h3>
+            <span class="c2-muted">{list.length ? 'Tap a session to request a free trial' : 'By appointment'}</span>
+          </div>
+          {list.length > 0 ? (
+            <ul class="c2-sessions__list">
+              {list.map((s) => (
+                <li>
+                  <button class="c2-session" type="button" data-book data-cls={s.cls} data-when={s.when}>
+                    <span class="c2-session__day">{s.dayLong}</span>
+                    <span class="c2-session__time">{s.time}</span>
+                    <span class="c2-session__note">{s.note}</span>
+                    <span class="c2-session__go">Book <span aria-hidden="true">→</span></span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div class="c2-sessions__empty">
+              <p class="c2-p">Sessions are arranged around your week. Call and we'll find a time that suits you.</p>
+              <Btn href={PHONE_HREF} label={`Call ${PHONE}`} />
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  })}
+
+  <section class="c2-wrap c2-gallery" aria-label="Class photos">
+    <div class="c2-gallery__photo" data-label="Class photo" data-reveal><img src={img(program.g2)} alt={`${program.name} class`} loading="lazy" data-c2-zoom></div>
+    <div class="c2-gallery__photo" data-label="Class photo" data-reveal style="--d:120ms"><img src={img(program.img)} alt={`${program.name} class`} loading="lazy" data-c2-zoom></div>
+  </section>
+
+  <section class="c2-teal c2-teal--others" aria-labelledby="c2-others-title">
+    <div class="c2-wrap c2-center c2-teal__head">
+      <Lines lines={['Try something', 'else too']} id="c2-others-title" />
+    </div>
+    <div class="c2-rail" data-c2-rail>
+      <div class="c2-rail__track" data-c2-rail-track tabindex="0" aria-label="Other programs">
+        {others.map((p) => <ProgramCard program={p} index={PROGRAMS.indexOf(p)} />)}
+      </div>
+      <div class="c2-wrap c2-rail__ui">
+        <span class="c2-rail__bar" aria-hidden="true"><span data-c2-rail-bar></span></span>
+        <button class="c2-round" type="button" aria-label="Previous programs" data-c2-rail-prev>←</button>
+        <button class="c2-round" type="button" aria-label="Next programs" data-c2-rail-next>→</button>
+      </div>
+    </div>
+  </section>
+</Layout>

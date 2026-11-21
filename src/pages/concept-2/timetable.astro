@@ -1,0 +1,71 @@
+---
+import Layout from '../../layouts/Concept2Layout.astro';
+import Btn from '../../components/c2/Btn.astro';
+import Lines from '../../components/c2/Lines.astro';
+import Wave from '../../components/c2/Wave.astro';
+import { KIDS, TEENS, DAYS, PHONE_HREF, CLUB_NAME, img, sessions } from '../../data/site';
+import { TONES, toneStyle } from '../../data/concept2';
+
+const all = [
+  ...KIDS.flatMap((k) => sessions(k.name, k.sessions).map((s) => ({ ...s, group: 'kids', tone: TONES[k.key!] }))),
+  ...sessions(TEENS.name, TEENS.sessions).map((s) => ({ ...s, group: 'teens', tone: TONES.teens })),
+];
+const week = DAYS.map((day) => ({ day, sessions: all.filter((s) => s.dayLong === day) }));
+const groups = [['kids', 'Kids'], ['teens', 'Teens'], ['all', 'Everything']];
+const DEFAULT = 'kids';
+const LEGEND = [...KIDS.map((k) => ({ name: k.name, ages: k.ages, tone: TONES[k.key!] })), { name: 'Teens', ages: '13+', tone: TONES.teens }];
+---
+<Layout
+  title={`Timetable & Free Trial — ${CLUB_NAME} (Concept 2)`}
+  description="Weekly class timetable for kids martial arts and teens boxing, kickboxing and MMA in Cremorne. Tap any session to request a free trial."
+  image={img('kids-group-204.jpg')}
+>
+  <header class="c2-hero c2-hero--short">
+    <div class="c2-hero__media" data-label="Kids class" data-c2-parallax="0.25">
+      <img src={img('kids-group-204.jpg')} alt="" fetchpriority="high">
+    </div>
+    <div class="c2-hero__copy">
+      <p class="c2-kicker c2-hero__rise">Timetable · Free trial</p>
+      <Lines as="h1" class="c2-h1" lines={['Pick a class', "we'll hold it"]} fade={9} />
+    </div>
+    <Wave />
+  </header>
+
+  <section class="c2-wrap c2-center c2-tt-head">
+    <p class="c2-statement" data-reveal><b>Tap any session to request a free trial.</b> Bookings are essential and the timetable can change, so we'll confirm by phone.</p>
+    <div class="c2-pills" role="group" aria-label="Filter classes" data-tt-filter>
+      {groups.map(([g, label]) => <button type="button" data-group={g} aria-pressed={g === DEFAULT ? 'true' : 'false'}>{label}</button>)}
+    </div>
+    <ul class="c2-legend">
+      {LEGEND.map((l) => <li style={toneStyle(l.tone)}><span aria-hidden="true"></span>{l.name} <small>{l.ages}</small></li>)}
+    </ul>
+  </section>
+
+  <section class="c2-wrap c2-week week" data-tt-week aria-live="polite">
+    {week.map((d, di) => {
+      const visible = d.sessions.filter((s) => s.group === DEFAULT).length;
+      return (
+        <div class="day" data-reveal style={`--d:${di * 60}ms`}>
+          <h2>{d.day}</h2>
+          {d.sessions.map((s) => (
+            <button class="slot" type="button" data-book data-cls={s.cls} data-when={s.when} data-group={s.group} hidden={s.group !== DEFAULT} style={toneStyle(s.tone)}>
+              <span class="slot__time">{s.time}</span>
+              <span class="slot__cls">{s.cls}</span>
+              {s.note && <span class="slot__note">{s.note}</span>}
+            </button>
+          ))}
+          <div class="day__empty" hidden={visible > 0}>No classes</div>
+        </div>
+      );
+    })}
+  </section>
+
+  <section class="c2-wrap c2-adults" data-reveal>
+    <div>
+      <p class="c2-kicker">Adults &amp; teens</p>
+      <h2 class="c2-h2">Krav Maga, MMA, boxing <span class="fade">and kickboxing</span></h2>
+      <p class="c2-p">Adult and teen sessions run by appointment around the kids timetable.</p>
+    </div>
+    <Btn href={PHONE_HREF} variant="light" label="Call to arrange" />
+  </section>
+</Layout>

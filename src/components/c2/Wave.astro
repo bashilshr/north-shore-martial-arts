@@ -1,0 +1,8 @@
+---
+// Soft wave edge between sections. Its colour is `currentColor`, so set `color` on .c2-wave.
+interface Props { class?: string; flip?: boolean }
+const { class: cls = '', flip = false } = Astro.props;
+---
+<svg class:list={['c2-wave', cls, { 'c2-wave--flip': flip }]} viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+  <path d="M0 70C180 118 420 126 720 84S1200 6 1440 34V120H0Z" fill="currentColor" />
+</svg>

@@ -1,0 +1,15 @@
+---
+// Pill button whose label rolls up on hover (two stacked copies of the text).
+interface Props {
+  label: string;
+  href?: string;
+  variant?: 'dark' | 'ghost' | 'light' | 'line';
+  class?: string;
+  [attr: string]: unknown;
+}
+const { label, href, variant = 'dark', class: cls = '', ...rest } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+<Tag class={`c2-btn c2-btn--${variant} ${cls}`.trim()} href={href} type={href ? undefined : 'button'} {...rest}>
+  <span class="c2-btn__roll"><span>{label}</span><span aria-hidden="true">{label}</span></span>
+</Tag>

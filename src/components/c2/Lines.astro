@@ -1,0 +1,17 @@
+---
+// Heading split into lines that slide up into view. Lines from index `fade` on are dimmed.
+interface Props {
+  lines: string[];
+  as?: 'h1' | 'h2' | 'h3';
+  class?: string;
+  fade?: number;
+  id?: string;
+}
+const { lines, as: Tag = 'h2', class: cls = 'c2-h2', fade = 1, id } = Astro.props;
+---
+<Tag class={cls} id={id} data-lines>
+  <span class="sr-only">{lines.join(' ')}</span>
+  {lines.map((line, i) => (
+    <span class:list={['c2-line', { fade: i >= fade }]} aria-hidden="true"><span style={`--i:${i}`}>{line}</span></span>
+  ))}
+</Tag>

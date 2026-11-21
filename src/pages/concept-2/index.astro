@@ -1,0 +1,266 @@
+---
+import Layout from '../../layouts/Concept2Layout.astro';
+import Btn from '../../components/c2/Btn.astro';
+import Lines from '../../components/c2/Lines.astro';
+import Wave from '../../components/c2/Wave.astro';
+import ProgramCard from '../../components/c2/ProgramCard.astro';
+import { PROGRAMS, KIDS, QUOTES, AFFILIATIONS, STATS, VALUES, PHONE_HREF, FACEBOOK, CLUB_NAME, img } from '../../data/site';
+import { TONES, KIDS_SLIDES, HERO_PHOTO, c2Href, c2Program, toneStyle } from '../../data/concept2';
+
+const byId = (id: string) => PROGRAMS.find((p) => p.id === id)!;
+
+// Colour-block rows: photo on one side, a deep colour panel with light type on the other.
+const SPLITS = [
+  { program: byId('kids'), file: 'kids-group-204.jpg', lines: ['Courage from', 'age three'], text: 'Four age-graded programs from 3 to 13, each with its own colourful belt grading so every child has a next goal in reach.', cta: 'Explore kids classes' },
+  { program: byId('kickboxing'), file: 'kickboxing273-500.jpg', lines: ['Fitness that', 'fights back'], text: 'Focus pads for speed, Muay Thai kicks for power, combat drills for stamina. For every shape, size and fitness level.', cta: 'Explore kickboxing' },
+  { program: byId('selfdefence'), file: 'self-defence-5.jpg', lines: ['Confidence', 'for the street'], text: 'Urban defensive tactics drawn from Taekwondo, Hapkido, MMA and Krav Maga. Practical, effective and easy to learn.', cta: 'Explore self defence', tone: TONES.boxing },
+];
+
+// Four "built for" cards in the teal section (facts from the club's own copy).
+const FEATURES = [
+  { title: 'Coloured-belt grading', text: 'A grading system of colourful belts gives every student a goal to work towards, and a moment to celebrate.', icon: 'belt' },
+  { title: 'Beginner & advanced streams', text: 'Kids classes split by experience, so first-timers find their feet and returning students keep being challenged.', icon: 'levels' },
+  { title: 'Every age, one roof', text: 'Mini Cubs from 3, Tigers to 13, then teens and adults in kickboxing, boxing and self defence.', icon: 'family' },
+  { title: 'Big, bright, clean studio', text: 'A Military Road studio with padded mats and room to kick, jump and roll. Parents notice it first.', icon: 'studio' },
+];
+
+const STAT_ROWS = [
+  { num: 'FREE', label: 'First class', text: "Pick any session and we'll hold a spot. Bookings are essential, so we'll confirm by phone." },
+  { num: STATS[2].value, plus: true, label: STATS[2].label, text: STATS[2].detail },
+  { num: `0${STATS[0].value}`, label: STATS[0].label, text: STATS[0].detail },
+];
+
+// Name split over two lines for the slideshow titles ("Junior / Tigers").
+const twoLines = (name: string) => {
+  const parts = name.split(' ');
+  return parts.length > 1 ? [parts.slice(0, -1).join(' '), parts.at(-1)!] : [name, ''];
+};
+const MARQUEE_VALUES = VALUES.map((v) => v.name.toLowerCase()).join(' – ') + ' – ';
+---
+<Layout
+  title={`${CLUB_NAME} — Concept 2`}
+  description="Concept 2: a bold, colour-blocked design for the North Shore Mixed Martial Arts Club site."
+  image={img(HERO_PHOTO)}
+>
+  <!-- HERO: full-bleed photo, italic uppercase headline, wave edge -->
+  <header class="c2-hero">
+    <div class="c2-hero__media" data-label="Junior Tigers kicking practice" data-c2-parallax="0.25">
+      <img src={img(HERO_PHOTO)} alt="" fetchpriority="high">
+    </div>
+    <div class="c2-hero__copy">
+      <p class="c2-kicker c2-hero__rise">Cremorne · Military Road</p>
+      <Lines as="h1" class="c2-h1" lines={['One club for', 'every age']} fade={9} />
+      <p class="c2-hero__lead c2-hero__rise">Kids from 3 to 13, plus kickboxing, boxing and self defence for adults, taught by Hall of Fame instructor Master Steven Tran.</p>
+      <div class="c2-row c2-row--center c2-hero__rise">
+        <Btn href={c2Href('timetable/')} variant="light" label="Book a free trial" />
+        <Btn href="#programs" variant="ghost" label="See programs" data-smooth />
+      </div>
+    </div>
+    <span class="c2-hero__scroll" aria-hidden="true"><span></span></span>
+    <Wave />
+  </header>
+
+  <!-- INTRO: affiliations ticker, statement, colour-block rows -->
+  <section class="c2-intro" aria-labelledby="c2-intro-title">
+    <div class="c2-wrap c2-center">
+      <p class="c2-title c2-muted" id="c2-aff">Affiliated with</p>
+      <ul class="sr-only" aria-labelledby="c2-aff">{AFFILIATIONS.map((a) => <li>{a.name}</li>)}</ul>
+      <div class="c2-ticker" aria-hidden="true">
+        <div class="c2-ticker__track">
+          {[0, 1].map(() => AFFILIATIONS.map((a) => (
+            <span class="c2-ticker__logo" data-label={a.name}><img src={img(a.file)} alt="" loading="lazy"></span>
+          )))}
+        </div>
+      </div>
+
+      <h2 class="c2-statement" id="c2-intro-title" data-reveal>
+        Kids from <b>age three</b>, adults of <b>every level</b>, and one <b>Hall of Fame</b> master teaching them all.
+      </h2>
+      <Btn href={c2Href('timetable/')} label="Book a free trial" data-reveal />
+    </div>
+
+    <div class="c2-wrap c2-splits">
+      {SPLITS.map((s, i) => (
+        <a class:list={['c2-split', { 'c2-split--flip': i % 2 === 1 }]} href={c2Program(s.program)} style={toneStyle(s.tone ?? TONES[s.program.id])} data-reveal>
+          <span class="c2-split__media" data-label={s.program.imgLabel}><img src={img(s.file)} alt="" loading="lazy"></span>
+          <span class="c2-split__body">
+            <span class="c2-kicker">{s.program.ages}</span>
+            <Lines lines={s.lines} as="h3" />
+            <span class="c2-split__text">{s.text}</span>
+            <span class="c2-arrow">{s.cta}<span aria-hidden="true">→</span></span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- INSTRUCTOR: giant marquee of the four values over a split photo -->
+  <section class="c2-master" aria-labelledby="c2-master-title">
+    <div class="c2-super c2-master__super" aria-hidden="true">
+      <div class="c2-super__track" data-c2-scrollx="-0.45"><span>{MARQUEE_VALUES}</span><span>{MARQUEE_VALUES}</span></div>
+    </div>
+    <div class="c2-wrap c2-master__grid">
+      <div class="c2-master__copy">
+        <Lines lines={['Taught by a', 'Hall of Fame', 'master']} fade={2} id="c2-master-title" />
+        <p class="c2-p c2-master__text" data-reveal>Master Steven Tran is a world champion in Taekwondo and Kickboxing, inducted into the Australasian Martial Arts and World Karate Union Halls of Fame in 2019 for lifetime achievement.</p>
+        <blockquote class="c2-master__quote" data-reveal>“Friendly, respectful and firm.”<cite>How parents describe him, every time.</cite></blockquote>
+        <Btn href={c2Program(byId('pt'))} label="Train with Master Tran" data-reveal />
+      </div>
+    </div>
+    <div class="c2-master__media" data-label="Master Steven Tran receiving his Hall of Fame award">
+      <img src={img('master-tran-being-awarded-hall-of-fame-4.jpg')} alt="Master Steven Tran receiving his Hall of Fame award" loading="lazy" data-c2-zoom>
+    </div>
+  </section>
+
+  <!-- PROGRAMS: draggable card rail + four "built for" cards, on teal -->
+  <section class="c2-teal" id="programs" aria-labelledby="c2-programs-title">
+    <div class="c2-wrap c2-center c2-teal__head">
+      <Lines lines={['Every program', 'under one roof']} id="c2-programs-title" />
+      <p class="c2-p c2-teal__lead" data-reveal>Five programs, from a three-year-old's first bow to one-on-one training with a master. Drag, swipe or use the arrows.</p>
+    </div>
+
+    <div class="c2-rail" data-c2-rail>
+      <div class="c2-rail__track" data-c2-rail-track tabindex="0" aria-label="Programs">
+        {PROGRAMS.map((p, i) => <ProgramCard program={p} index={i} />)}
+      </div>
+      <div class="c2-wrap c2-rail__ui">
+        <span class="c2-rail__bar" aria-hidden="true"><span data-c2-rail-bar></span></span>
+        <button class="c2-round" type="button" aria-label="Previous programs" data-c2-rail-prev>←</button>
+        <button class="c2-round" type="button" aria-label="Next programs" data-c2-rail-next>→</button>
+      </div>
+    </div>
+
+    <div class="c2-wrap c2-center c2-teal__more">
+      <Btn href={c2Href('timetable/')} variant="ghost" label="See the timetable" />
+    </div>
+
+    <div class="c2-wrap c2-center c2-teal__head">
+      <Lines lines={['Built for', 'every family']} />
+      <p class="c2-p c2-teal__lead" data-reveal>Structured yet fun, with the same four values in every class: courage, respect, integrity and loyalty.</p>
+    </div>
+    <div class="c2-wrap c2-features">
+      {FEATURES.map((f, i) => (
+        <article class="c2-feature" data-reveal style={`--d:${i * 90}ms`}>
+          <div class="c2-feature__head">
+            <h3 class="c2-title">{f.title}</h3>
+            <svg class="c2-feature__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              {f.icon === 'belt' && <><path d="M4 20h40v8H4z" /><path d="M20 28l-5 14M28 28l5 14" /><rect x="19" y="17" width="10" height="14" rx="2" /></>}
+              {f.icon === 'levels' && <><path d="M6 40h10V28H6zM19 40h10V18H19zM32 40h10V8H32z" /></>}
+              {f.icon === 'family' && <><circle cx="16" cy="13" r="5" /><circle cx="33" cy="19" r="4" /><path d="M7 41v-8a9 9 0 0 1 18 0v8M26 41v-6a7 7 0 0 1 14 0v6" /></>}
+              {f.icon === 'studio' && <><path d="M6 40V18L24 7l18 11v22z" /><path d="M6 40h36M16 40V27h16v13" /></>}
+            </svg>
+          </div>
+          <p class="c2-feature__text">{f.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- KIDS SLIDESHOW: full-screen crossfade, one slide per age group, "+" hotspot with details -->
+  <section class="c2-show" aria-roledescription="carousel" aria-label="Kids programs by age" data-c2-show>
+    {KIDS.map((k, i) => {
+      const s = KIDS_SLIDES[k.key!];
+      const [a, b] = twoLines(k.name);
+      return (
+        <article class="c2-slide" aria-roledescription="slide" aria-label={`${i + 1} of ${KIDS.length}: ${k.name}`} data-active={i === 0 ? '' : undefined} style={toneStyle(TONES[k.key!])}>
+          <div class="c2-slide__media" data-label={k.name}><img src={img(s.file)} alt="" loading="lazy"></div>
+          <div class="c2-slide__content">
+            <p class="c2-slide__ages">{k.ages}</p>
+            <h2 class="c2-slide__title">{a}<br>{b}</h2>
+            <p class="c2-slide__text">{k.sessions.length} classes a week · {k.points[0]}</p>
+            <Btn href={c2Href(`kids-martial-arts/#${k.key}`)} variant="light" label="See classes" />
+          </div>
+          <div class="c2-hot" style={`--x:${s.x}%;--y:${s.y}%`}>
+            <button class="c2-hot__dot" type="button" aria-expanded="false" aria-label={`About ${k.name}`} data-c2-hot><span aria-hidden="true"></span></button>
+            <div class="c2-hot__card">
+              <p class="c2-caps">{k.name}</p>
+              <p>{k.text}</p>
+              <ul>{k.points.map((pt) => <li>{pt}</li>)}</ul>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+    <div class="c2-show__ui">
+      <span class="c2-show__count" aria-hidden="true"><b data-c2-show-n>01</b> / 0{KIDS.length}</span>
+      <div class="c2-show__dots">
+        {KIDS.map((k, i) => <button type="button" aria-label={`Show ${k.name}`} aria-current={i === 0 ? 'true' : undefined} data-c2-show-dot={i}><span></span></button>)}
+      </div>
+      <button class="c2-round c2-round--light" type="button" aria-label="Previous age group" data-c2-show-prev>←</button>
+      <button class="c2-round c2-round--light" type="button" aria-label="Next age group" data-c2-show-next>→</button>
+    </div>
+  </section>
+
+  <!-- STATS: big numbers on black -->
+  <section class="c2-stats" aria-label="The club in numbers">
+    <div class="c2-wrap">
+      {STAT_ROWS.map((s, i) => (
+        <>
+          {i > 0 && <hr class="c2-stats__rule" />}
+          <div class="c2-stat" data-reveal>
+            <span class="c2-stat__num">{/^\d+$/.test(s.num) ? <span data-c2-count={Number(s.num)} data-pad={s.num.length}>{s.num}</span> : s.num}{s.plus && '+'}</span>
+            <span class="c2-title">{s.label}</span>
+            <p>{s.text}</p>
+          </div>
+        </>
+      ))}
+    </div>
+  </section>
+
+  <!-- TRAIN: full-height black section, marquee word, photo, timetable CTA -->
+  <section class="c2-train" aria-labelledby="c2-train-title">
+    <div class="c2-super c2-train__super" aria-hidden="true">
+      <div class="c2-super__track" data-c2-scrollx="0.4"><span>train – kick – train – kick – </span><span>train – kick – train – kick – </span></div>
+    </div>
+    <div class="c2-wrap c2-train__grid">
+      <div class="c2-train__copy">
+        <Lines lines={['Classes seven', 'days a week']} id="c2-train-title" />
+        <p class="c2-p" data-reveal>Mornings to evenings, with beginner and advanced streams for the kids and teens. Tap any session on the timetable to request a free trial.</p>
+        <div class="c2-row" data-reveal>
+          <Btn href={c2Href('timetable/')} variant="light" label="See the timetable" />
+          <Btn href={PHONE_HREF} variant="ghost" label="Call the club" />
+        </div>
+      </div>
+      <div class="c2-train__media" data-label="Boxing session"><img src={img('boxing-3-1.jpg')} alt="" loading="lazy" data-c2-zoom></div>
+    </div>
+  </section>
+
+  <!-- CALL BACK + REVIEWS -->
+  <section class="c2-mist" aria-labelledby="c2-callback-title">
+    <Wave class="c2-mist__wave" flip />
+    <div class="c2-wrap c2-center">
+      <Lines lines={['Request a', 'call back']} id="c2-callback-title" fade={9} />
+      <p class="c2-p c2-muted c2-mist__lead" data-reveal>Not sure which class fits? Leave your number and we'll help you choose.</p>
+      <form class="c2-callback" novalidate data-c2-callback data-reveal>
+        <input type="hidden" name="class" value="Call back request">
+        <input type="hidden" name="when" value="Any time">
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="sr-only" for="cb-name">Your name</label>
+        <input class="c2-callback__field" id="cb-name" name="name" placeholder="Name" autocomplete="name" required>
+        <label class="sr-only" for="cb-phone">Phone</label>
+        <input class="c2-callback__field" id="cb-phone" name="phone" type="tel" placeholder="Phone" autocomplete="tel" required>
+        <button class="c2-callback__go" type="submit" aria-label="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" /></svg>
+        </button>
+      </form>
+      <p class="c2-callback__msg" role="status" data-c2-callback-msg></p>
+
+      <a class="c2-tab" href={FACEBOOK} rel="noopener">
+        <span class="c2-title">From parents & students</span>
+        <span class="c2-tab__line" aria-hidden="true"></span>
+        <span class="c2-caps">More on Facebook</span>
+      </a>
+    </div>
+    <div class="c2-reviews">
+      <ul class="sr-only">{QUOTES.map((q) => <li>{q.text} — {q.name}, {q.role}</li>)}</ul>
+      <div class="c2-reviews__track" aria-hidden="true">
+        {[0, 1, 2].map(() => QUOTES.map((q) => (
+          <figure class="c2-review">
+            <blockquote>{q.text}</blockquote>
+            <figcaption><span class="c2-caps">{q.name}</span><span>{q.role}</span></figcaption>
+          </figure>
+        )))}
+      </div>
+    </div>
+  </section>
+</Layout>

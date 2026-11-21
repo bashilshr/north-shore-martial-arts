@@ -2,6 +2,8 @@
 
 Static website built with [Astro](https://astro.build). The look is the light, Apple-style design from `../Website redesign with Apple design/North Shore Martial Arts.dc.html` (previewed at `/concept/` until it became the main site; `public/_redirects` sends old `/concept/*` links to the same page at the root).
 
+**Concept 2** (a bold, colour-blocked design with italic uppercase type, marquee words, card rails and a full-screen kids slideshow) is previewed at `/concept-2/` and is `noindex`. It uses the same content from `src/data/site.ts` and the same booking/tabs/timetable behaviour (`src/scripts/site.ts`). Its own files are `src/pages/concept-2/`, `src/layouts/Concept2Layout.astro`, `src/components/c2/`, `src/data/concept2.ts` (URLs, colour pairs, photo picks), `src/styles/concept2.css` and `src/scripts/concept2.ts`.
+
 ## Pages
 
 | URL | Source |
