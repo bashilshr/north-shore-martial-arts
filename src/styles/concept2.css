@@ -220,8 +220,9 @@ address { font-style: normal; }
 .c2-ticker { position: relative; width: 100%; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
 .c2-ticker__track { display: flex; width: max-content; animation: c2Marquee 60s linear infinite; }
 .c2-ticker:hover .c2-ticker__track { animation-play-state: paused; }
-.c2-ticker__logo { position: relative; display: grid; place-items: center; width: 140px; height: 76px; margin-right: 28px; flex: none; }
-.c2-ticker__logo img { max-width: 100%; max-height: 100%; object-fit: contain; mix-blend-mode: multiply; filter: grayscale(1) contrast(1.05); opacity: 0.75; transition: filter 300ms, opacity 300ms; }
+.c2-ticker__logo { position: relative; display: block; width: 150px; height: 84px; margin-right: 28px; flex: none; }
+/* Fill the box and letterbox inside it, so tall logos (circles, crests) are never cropped. */
+.c2-ticker__logo img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; filter: grayscale(1) contrast(1.05); opacity: 0.75; transition: filter 300ms, opacity 300ms; }
 .c2-ticker__logo:hover img { filter: none; opacity: 1; }
 @keyframes c2Marquee { to { transform: translate3d(-50%, 0, 0); } }
 
