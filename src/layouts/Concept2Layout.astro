@@ -42,6 +42,7 @@ const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${enc
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="/logo-mark.png">
+  <link rel="preload" href="/brand/emblem.webp" as="image" type="image/webp" fetchpriority="high">
   <!-- js: enables the curtain + reveal styles. The timeout lifts the curtain even if the module script fails. -->
   <script is:inline>document.documentElement.classList.add('js');setTimeout(function(){document.documentElement.setAttribute('data-c2-ready','')},2500);</script>
 </head>
@@ -50,7 +51,10 @@ const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${enc
 
   <!-- Page curtain: lifts on load, drops back in before moving to another concept page -->
   <div class="c2-curtain" aria-hidden="true">
-    <span class="c2-curtain__mark"><img src="/logo-mark.png" alt="" width="60" height="64"></span>
+    <picture class="c2-curtain__mark">
+      <source srcset="/brand/emblem.webp" type="image/webp">
+      <img src="/brand/emblem.png" alt="" width="842" height="900" decoding="sync" fetchpriority="high" data-c2-emblem>
+    </picture>
   </div>
   <div class="c2-outro" aria-hidden="true"></div>
 

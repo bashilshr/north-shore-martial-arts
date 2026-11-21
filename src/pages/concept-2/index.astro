@@ -96,7 +96,11 @@ const MARQUEE_VALUES = VALUES.map((v) => v.name.toLowerCase()).join(' – ') + '
 
   <!-- INSTRUCTOR: giant marquee of the four values over a split photo -->
   <section class="c2-master" aria-labelledby="c2-master-title">
+    <!-- Same marquee twice, moving together: filled over the background, outline only over the photo -->
     <div class="c2-super c2-master__super" aria-hidden="true">
+      <div class="c2-super__track" data-c2-scrollx="-0.45"><span>{MARQUEE_VALUES}</span><span>{MARQUEE_VALUES}</span></div>
+    </div>
+    <div class="c2-super c2-master__super c2-master__super--outline" aria-hidden="true">
       <div class="c2-super__track" data-c2-scrollx="-0.45"><span>{MARQUEE_VALUES}</span><span>{MARQUEE_VALUES}</span></div>
     </div>
     <div class="c2-wrap c2-master__grid">

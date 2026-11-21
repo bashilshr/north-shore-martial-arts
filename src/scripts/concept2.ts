@@ -6,9 +6,16 @@ const root = document.documentElement;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 const BASE = '/concept-2/';
 
-/* ---------- Curtain: lift once fonts are in (or after 900ms), drop it again before leaving ---------- */
+/* ---------- Curtain: lift once fonts and the emblem are in, drop it again before leaving ---------- */
+// The emblem stays on screen at least ~750ms so it is actually seen; never longer than 1.8s in total.
 const lift = () => requestAnimationFrame(() => root.setAttribute('data-c2-ready', ''));
-Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 900))]).then(lift);
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const emblem = document.querySelector<HTMLImageElement>('[data-c2-emblem]');
+const emblemReady = emblem ? emblem.decode().catch(() => undefined) : Promise.resolve();
+Promise.race([
+  Promise.all([document.fonts?.ready ?? Promise.resolve(), emblemReady, wait(750)]),
+  wait(1800),
+]).then(lift);
 
 document.addEventListener('click', (e) => {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
