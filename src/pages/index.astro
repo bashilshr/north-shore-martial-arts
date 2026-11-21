@@ -1,90 +1,111 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { PROGRAMS, VALUES, STATS, STEPS, QUOTES, AFFILIATIONS, PHONE, PHONE_HREF, CLUB_NAME, img, programHref } from '../data/site';
+import ConceptLayout from '../../layouts/ConceptLayout.astro';
+import { PROGRAMS, QUOTES, AFFILIATIONS, STATS, PHONE_HREF, FACEBOOK, CLUB_NAME, img } from '../../data/site';
+import { COLORS, VALUE_NOTES, HERO_IMAGE, conceptHref } from '../../data/concept';
+
+const HEADLINE = ['Martial', 'arts', 'for', 'the'];
+const HEADLINE_ACCENT = ['whole', 'family.'];
+
+// Hero collage: 5 columns, centre column first. Outer columns sit lower and drift up faster on scroll.
+const COLLAGE = [
+  [{ file: 'kids-group-204.jpg', label: 'Kids group', shape: 'tall' }, { file: 'boxing-1-1.jpg', label: 'Boxing', shape: 'square' }],
+  [{ file: 'kickboxing273-500.jpg', label: 'Kickboxing', shape: 'square' }, { file: 'girls-kicking-high-029.jpg', label: 'High kicks', shape: 'tall' }],
+  [{ file: HERO_IMAGE, label: 'Kids class', shape: 'hero' }, { file: 'master-tran-being-awarded-hall-of-fame-4.jpg', label: 'Master Tran', shape: 'square' }],
+  [{ file: 'boxing-4-1.jpg', label: 'Boxing pads', shape: 'tall' }, { file: 'kids-martial-arts-lined-up-016.jpg', label: 'Kids lined up', shape: 'square' }],
+  [{ file: 'self-defence-3-1.jpg', label: 'Self defence', shape: 'square' }, { file: 'childrens-martialarts-1.jpg', label: 'Kids training', shape: 'tall' }],
+];
+const DRIFT = [0.22, 0.1, 0, 0.1, 0.22];
+
+// Belt colours for the values section, in grading order.
+const BELTS = ['#f7f5ef', '#f2c230', '#2e9b58', '#1d1d1f'];
+
+// Head instructor "fighter card" stats and career timeline (facts from the club's own copy).
+const CARD_STATS = [
+  { value: STATS[0].value, label: 'Hall of Fame', plus: false },
+  { value: STATS[1].value, label: 'Kids programs', plus: false },
+  { value: STATS[2].value, label: 'Classes a week', plus: true },
+];
+const TIMELINE = [
+  { when: 'Career', title: 'World champion', text: 'Taekwondo and Kickboxing.' },
+  { when: '2019', title: 'Australasian Martial Arts Hall of Fame', text: 'Inducted for lifetime achievement in martial arts.' },
+  { when: '2019', title: 'World Karate Union Hall of Fame', text: 'A second induction the same year.' },
+  { when: 'Today', title: 'Head instructor, Cremorne', text: 'Teaching kids from 3 and adults of every level.' },
+];
+
+// Avatar colours for the testimonial thread.
+const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
 ---
-<Layout
-  title={`${CLUB_NAME} — Cremorne`}
-  description="Kids martial arts, kickboxing, boxing and self defence on Military Road, Cremorne, led by Hall of Fame instructor Master Steven Tran. Book a free trial."
+<ConceptLayout
+  title={`${CLUB_NAME} — Cremorne (concept)`}
+  description="Concept: a light, Apple-style design for the club site."
+  current="/"
 >
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero__img" data-parallax data-label="Hero: kickboxing">
-      <img src={img('kickboxing273-500.jpg')} alt="" fetchpriority="high">
-    </div>
-    <div class="hero__shade"></div>
-    <div class="hero__plus" aria-hidden="true"><span>+</span><span>+</span><span>+</span></div>
-    <div class="wrap hero__body">
-      <div class="rise">
-        <h1 class="display hero__title">
-          <span class="word" style="animation-delay:100ms">Train</span><br>
-          <span class="word" style="animation-delay:220ms">Hard.</span><br>
-          <span class="word plus" style="animation-delay:340ms">Stand</span>{" "}
-          <span class="word plus" style="animation-delay:440ms">Tall.</span>
-        </h1>
-      </div>
-      <div class="hero__side rise">
-        <p>Martial arts, kickboxing, boxing and self defence in a bright, clean studio on Military Road, led by Hall of Fame instructor Master Steven Tran.</p>
-        <div class="btn-row">
-          <a class="btn btn--accent btn--lg" href="/timetable/">Book a free trial</a>
-          <a class="btn btn--glass btn--lg" href="#programs" data-smooth>See programs</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- AFFILIATIONS MARQUEE -->
-  <section class="marquee" aria-labelledby="affiliations-title">
-    <p class="wrap eyebrow" id="affiliations-title">Affiliations</p>
-    <div class="marquee__track">
-      {[0, 1].map((copy) => AFFILIATIONS.map((a) => (
-        <span class="marquee__item" aria-hidden={copy === 1 ? 'true' : undefined}>
-          <span class="marquee__logo" data-label={a.name}><img src={img(a.file)} alt={copy === 0 ? a.name : ''} title={a.name} loading="lazy"></span>
-          <span class="plus" aria-hidden="true">+</span>
+  <!-- HERO: centred headline over a fan of class photos that drift apart as you scroll -->
+  <section class="hero hero--collage">
+    <span class="emblem emblem--hero" aria-hidden="true"></span>
+    <div class="wrap stack hero__copy">
+      <p class="eyebrow rise">Cremorne, NSW · Military Road</p>
+      <h1 class="h1 headline" aria-label="Martial arts for the whole family.">
+        {HEADLINE.map((w, i) => <span class="w" aria-hidden="true" style={`--i:${i}`}>{w} </span>)}
+        <span class="headline__accent" aria-hidden="true">
+          {HEADLINE_ACCENT.map((w, i) => <span class="w" style={`--i:${HEADLINE.length + i}`}>{w}{i === 0 ? ' ' : ''}</span>)}
+          <svg class="scribble" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 60 6, 120 4, 180 9 S 270 18, 296 8" pathLength="1" /></svg>
         </span>
-      )))}
+      </h1>
+      <p class="lead rise" style="animation-delay:520ms">Kids programs from 3 to 13, and kickboxing, boxing, self defence and personal training for adults, taught by Hall of Fame instructor Master Steven Tran.</p>
+      <div class="row rise" style="animation-delay:620ms">
+        <a class="pill pill--accent pill--lg" href={conceptHref('timetable')}>See timetable &amp; book a class</a>
+        <a class="pill pill--soft pill--lg" href={PHONE_HREF}>Call the club</a>
+      </div>
+      <p class="fine rise" style="animation-delay:700ms">First class is free. Bookings essential.</p>
+    </div>
+    <div class="collage" role="img" aria-label="Classes at the club: kids martial arts, kickboxing, boxing, self defence and Master Steven Tran">
+      {COLLAGE.map((col, c) => (
+        <div class={`collage__col collage__col--${c}`} data-drift={DRIFT[c]}>
+          {col.map((t, r) => (
+            <div class={`photo collage__tile collage__tile--${t.shape}`} data-label={t.label} style={`--d:${Math.abs(c - 2) * 120 + r * 90}ms`}>
+              <img src={img(t.file)} alt="" fetchpriority={c === 2 && r === 0 ? 'high' : undefined} loading={c === 2 ? undefined : 'lazy'}>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   </section>
 
-  <!-- MANIFESTO -->
-  <section class="wrap grid-auto manifesto">
-    <div class="stack" data-reveal style="gap:28px">
-      <p class="eyebrow">What is {CLUB_NAME}</p>
-      <h2 class="display h2">A club where kids find their feet and adults find their fight.</h2>
-      <p class="lead">Structured, fun and educational. Four age-graded kids programs with coloured belts so every child has a next goal in reach, and adult sessions built around technique first, fitness fast.</p>
-      <a class="btn btn--outline" href="/kids-martial-arts/" style="align-self:flex-start">Kids classes →</a>
+  <!-- AFFILIATIONS: logo tiles drifting past, right under the hero -->
+  <section class="affiliations rise" style="animation-delay:900ms" aria-labelledby="aff-title">
+    <p class="wrap label" id="aff-title">Affiliated with</p>
+    <ul class="sr-only">{AFFILIATIONS.map((a) => <li>{a.name}</li>)}</ul>
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        {[0, 1].map(() => AFFILIATIONS.map((a) => (
+          <span class="logo-tile" data-label={a.name} title={a.name}>
+            <img src={img(a.file)} alt="" loading="lazy">
+          </span>
+        )))}
+      </div>
     </div>
-    <ul class="plain values" data-reveal style="--d:120ms" aria-label="Our values">
-      {VALUES.map((v) => (
-        <li><span class="num">{v.num}</span><span class={v.accent ? 'accent' : undefined}>{v.name}</span></li>
-      ))}
-    </ul>
   </section>
 
   <!-- PROGRAMS -->
   <section class="programs" id="programs" aria-labelledby="programs-title" data-programs>
     <div class="programs__pin" data-programs-pin>
     <div class="wrap programs__head" data-reveal>
-      <div class="stack" style="gap:14px">
-        <p class="eyebrow">Our programs</p>
-        <h2 class="display h2" id="programs-title">Five ways in.</h2>
-        <p class="programs__hint">Scroll or drag to browse · tap a card for details</p>
-      </div>
-      <div class="btn-row" style="gap:8px">
-        <button class="icon-btn" type="button" aria-label="Previous programs" data-car-prev>←</button>
-        <button class="icon-btn" type="button" aria-label="Next programs" data-car-next>→</button>
-      </div>
+      <h2 class="h2" id="programs-title">Programs</h2>
     </div>
-    <div class="carousel" data-reveal data-carousel style="--d:150ms">
+    <div class="carousel" data-carousel>
       <div class="carousel__track" data-car-track>
-        {PROGRAMS.map((p) => (
-          <a class="program-card" href={programHref(p)} draggable="false">
-            <div class="kicker"><span>Program</span><span>{p.num}</span></div>
-            <h3 class="head">{p.name}</h3>
-            <div class="photo" data-label={p.imgLabel}><img src={img(p.img)} alt={p.imgLabel} loading="lazy" draggable="false"></div>
+        {PROGRAMS.map((p, i) => (
+          <a class="program-card" href={conceptHref(p.slug)} draggable="false" style={`--tone:${COLORS[p.id]}`}>
+            <div class="photo program-card__photo" data-label={p.imgLabel} style={`view-transition-name:prog-${p.id}`}><img src={img(p.img)} alt="" loading="lazy" draggable="false"></div>
+            <span class="program-card__num" aria-hidden="true">0{i + 1}</span>
+            <span class="program-card__go" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </span>
             <div class="program-card__body">
-              <p class="program-card__ages">{p.ages}</p>
+              <p class="program-card__tag"><span class="program-card__dot"></span>{p.ages}</p>
+              <h3 class="program-card__name">{p.name}</h3>
               <p class="program-card__blurb">{p.blurb}</p>
-              <span class="link-arrow">Explore {p.name} →</span>
             </div>
           </a>
         ))}
@@ -93,69 +114,111 @@ import { PROGRAMS, VALUES, STATS, STEPS, QUOTES, AFFILIATIONS, PHONE, PHONE_HREF
     </div>
   </section>
 
-  <!-- INSTRUCTOR + NUMBERS -->
-  <section class="light">
-    <div class="wrap grid-auto instructor">
-      <div class="stack" data-reveal style="gap:24px">
-        <p class="eyebrow">Head instructor</p>
-        <h2 class="display">Master<br>Steven Tran</h2>
-        <p class="copy">World champion in Taekwondo and Kickboxing. Inducted into both the Australasian Martial Arts Hall of Fame and the World Karate Union Hall of Fame in 2019 for lifetime achievement in martial arts.</p>
-        <p class="copy">This isn't a gym with certificates on the wall. It's a coach parents describe the same way, every time: friendly, respectful and firm.</p>
-        <div class="photo" data-label="Master Tran portrait"><img src={img('master-tran-being-awarded-hall-of-fame-4.jpg')} alt="Master Steven Tran receiving his Hall of Fame award" loading="lazy"></div>
+  <!-- VALUES -->
+  <section class="wrap section">
+    <div class="belt-panel" data-reveal>
+      <div class="belt-panel__head">
+        <p class="eyebrow">What we teach beyond technique</p>
+        <h2 class="h2">Four values, <em class="accent">every class.</em></h2>
+        <p class="body">Like a belt, they're earned one at a time, and kept for life.</p>
       </div>
-      <div class="stack" data-reveal style="--d:120ms">
-        <p class="eyebrow" style="padding-bottom:18px">The club in numbers</p>
-        {STATS.map((s) => (
-          <div class="stat">
-            <div><p class="stat__label">{s.label}</p><p class="stat__detail">{s.detail}</p></div>
-            <p class="stat__value">{s.value}<span aria-hidden="true">+</span></p>
-          </div>
-        ))}
-        <div class="btn-row stats__cta">
-          <a class="btn btn--dark" href="/timetable/">Book a free trial</a>
-          <a class="btn btn--outline-dark" href={PHONE_HREF}>{PHONE}</a>
-        </div>
+      <div class="belt" data-belt>
+        <div class="belt__track" aria-hidden="true"><div class="belt__fill"></div></div>
+        <ol class="belt__steps">
+          {VALUE_NOTES.map((v, i) => (
+            <li class="belt__step" style={`--c:${BELTS[i]}`}>
+              <span class="belt__node" aria-hidden="true"></span>
+              <span class="belt__num" aria-hidden="true">0{i + 1}</span>
+              <h3 class="h3">{v.name}</h3>
+              <p>{v.text}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   </section>
 
-  <!-- PROCESS -->
-  <section class="wrap process">
-    <div class="grid-auto process__head" data-reveal>
-      <div class="stack" style="gap:14px">
-        <p class="eyebrow">How it works</p>
-        <h2 class="display h2">From first class to black belt.</h2>
-      </div>
-      <p>Same path for a four-year-old Cub and a forty-year-old boxer: try it free, find the right level, grade when you're ready, keep showing up.</p>
+  <!-- INSTRUCTOR: a collectible "fighter card" that tilts with a holographic foil sheen, plus a career timeline -->
+  <section class="wrap split section coach">
+    <div class="coach__stage" data-reveal>
+      <article class="fcard" data-tilt aria-label="Master Steven Tran, head instructor">
+        <div class="fcard__inner">
+          <div class="fcard__top">
+            <span class="fcard__tag">Head instructor</span>
+            <span class="fcard__no">No. 01</span>
+          </div>
+          <div class="photo fcard__photo" data-label="Master Steven Tran, Hall of Fame induction">
+            <img src={img('master-tran-being-awarded-hall-of-fame-4.jpg')} alt="Master Steven Tran receiving his Hall of Fame award" loading="lazy">
+          </div>
+          <div class="fcard__name">
+            <span>Master</span>
+            <strong>Steven Tran</strong>
+          </div>
+          <dl class="fcard__stats">
+            {CARD_STATS.map((st) => (
+              <div>
+                <dd><span data-count={st.value}>{st.value}</span>{st.plus && <i aria-hidden="true">+</i>}</dd>
+                <dt>{st.label}</dt>
+              </div>
+            ))}
+          </dl>
+          <span class="fcard__emblem" aria-hidden="true"></span>
+        </div>
+        <span class="fcard__holo" aria-hidden="true"></span>
+        <span class="fcard__glare" aria-hidden="true"></span>
+      </article>
     </div>
-    <ol class="plain steps">
-      {STEPS.map((st, i) => (
-        <li class="card step" data-reveal style={`--d:${i * 90}ms`}>
-          <div class="kicker"><span>Step</span><span>{st.num}</span></div>
-          <h3 class="head">{st.title}</h3>
-          <p>{st.text}</p>
-        </li>
-      ))}
-    </ol>
+
+    <div class="stack coach__copy" data-reveal style="--d:120ms">
+      <p class="eyebrow">Head instructor</p>
+      <h2 class="h2">Master Steven Tran</h2>
+      <blockquote class="coach__quote">“Friendly, respectful and firm.”<span>How parents describe him, every time.</span></blockquote>
+      <ol class="timeline" data-reveal>
+        {TIMELINE.map((t, i) => (
+          <li style={`--i:${i}`}>
+            <span class="timeline__when">{t.when}</span>
+            <strong>{t.title}</strong>
+            <span class="timeline__what">{t.text}</span>
+          </li>
+        ))}
+      </ol>
+      <a class="pill pill--soft" href={conceptHref('kids-martial-arts')}>Train with Master Tran</a>
+    </div>
   </section>
 
   <!-- TESTIMONIALS -->
-  <section class="wrap testimonials" data-reveal data-testimonials aria-labelledby="quotes-title">
-    <p class="eyebrow" id="quotes-title">What parents and students say</p>
-    <div class="grid-auto">
-      <blockquote class="quote">
-        {QUOTES.map((q, i) => (
-          <p id={`quote-${i}`} role="tabpanel" aria-labelledby={`quote-tab-${i}`} hidden={i !== 0}>“{q.text}”</p>
-        ))}
-      </blockquote>
-      <div class="quote-tabs" role="tablist" aria-label="Testimonials">
-        {QUOTES.map((q, i) => (
-          <button class="quote-tab" id={`quote-tab-${i}`} type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`quote-${i}`}>
-            <span class="quote-tab__row"><span>{q.name}</span><span>{q.role}</span></span>
-            <span class="quote-tab__bar"><span class="quote-tab__fill"></span></span>
-          </button>
-        ))}
+  <!-- Testimonials as a message thread: each quote "types" in, then the visitor's own reply is the CTA -->
+  <section class="wrap split section section--last talk">
+    <div class="stack talk__copy" data-reveal>
+      <p class="eyebrow">From parents and students</p>
+      <h2 class="h2">Straight from the <em class="accent">families</em> who train here.</h2>
+      <p class="body">The words people use most: friendly, respectful, firm, and fun.</p>
+      <a class="more talk__fb" href={FACEBOOK} rel="noopener">More on our Facebook →</a>
+    </div>
+
+    <div class="phone" data-reveal style="--d:120ms">
+      <div class="phone__bar" aria-hidden="true">
+        <span class="phone__avatars">
+          {QUOTES.map((q, i) => <span class="avatar avatar--sm" style={`--a:${AVATAR[i]}`}>{q.name[0]}</span>)}
+        </span>
+        <span class="phone__title">Parents &amp; students</span>
       </div>
+      <ol class="chat" data-chat>
+        {QUOTES.map((q, i) => (
+          <li class="chat__msg">
+            <span class="avatar" style={`--a:${AVATAR[i]}`} aria-hidden="true">{q.name[0]}</span>
+            <figure class="chat__body">
+              <figcaption class="chat__who">{q.name} <span>· {q.role}</span></figcaption>
+              <span class="chat__typing" aria-hidden="true"><i></i><i></i><i></i></span>
+              <blockquote class="chat__bubble">{q.text}</blockquote>
+            </figure>
+          </li>
+        ))}
+        <li class="chat__msg chat__msg--me">
+          <a class="chat__bubble chat__bubble--me" href={conceptHref('timetable')}>Can I book a free trial? →</a>
+          <span class="chat__status" aria-hidden="true">Delivered</span>
+        </li>
+      </ol>
     </div>
   </section>
-</Layout>
+</ConceptLayout>
