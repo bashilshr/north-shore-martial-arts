@@ -61,7 +61,7 @@ const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${enc
   <header class="c2-nav" data-c2-nav>
     <a class="c2-brand" href={C2} aria-label={`${CLUB_NAME}, home`}>
       <img src="/logo-mark.png" alt="" width="34" height="36">
-      <span><strong>North Shore</strong><small>Martial Arts Club</small></span>
+      <span><strong>North Shore</strong><small>Mixed Martial Arts Club</small></span>
     </a>
 
     <nav class="c2-nav__links" aria-label="Main">
@@ -111,7 +111,11 @@ const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${enc
   <footer class="c2-footer">
     <div class="c2-wrap c2-footer__grid">
       <div class="c2-footer__brand">
-        <img src="/logo-full.png" alt={CLUB_NAME} width="180" height="88" loading="lazy">
+        <!-- Mark + typed name (logo-full.png's artwork leaves out "Mixed") -->
+        <a class="c2-brand c2-brand--foot" href={C2} aria-label={`${CLUB_NAME}, home`}>
+          <img src="/logo-mark.png" alt="" width="48" height="51" loading="lazy">
+          <span><strong>North Shore</strong><small>Mixed Martial Arts Club</small></span>
+        </a>
         <p>Your first class is on us. Pick any session and we'll hold a spot.</p>
         <Btn href={c2Href('timetable/')} label="Book a free trial" />
       </div>
