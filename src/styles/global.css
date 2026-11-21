@@ -1,5 +1,5 @@
-/* NSMMAC concept: light, Apple-style design (from "North Shore Martial Arts.dc.html").
-   System type, translucent materials, soft shadow depth, pointer-down feedback. Used only on /concept/ pages. */
+/* NSMMAC site: light, Apple-style design (from "North Shore Martial Arts.dc.html").
+   System type, translucent materials, soft shadow depth, pointer-down feedback. */
 
 :root {
   color-scheme: light;
@@ -179,7 +179,7 @@ input { font: inherit; }
 .programs { padding: 48px 0 24px; }
 .programs__pin { overflow: hidden; }
 /* Pinned (set by site.ts when it fits): page scroll slides the cards sideways, then carries on. */
-/* Height = the cards block + the sideways travel (--pin-h set by concept.ts), so no empty space is left below. */
+/* Height = the cards block + the sideways travel (--pin-h set by motion.ts), so no empty space is left below. */
 .programs.is-pinned { height: calc(var(--pin-h, 100svh) + var(--pin-dist, 0px)); padding-top: 0; padding-bottom: 0; }
 .programs.is-pinned .programs__pin { position: sticky; top: 0; display: flex; flex-direction: column; justify-content: flex-start; padding-top: clamp(80px, 11vh, 112px); }
 .programs__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
@@ -338,7 +338,7 @@ input { font: inherit; }
 .next__list.is-live li { animation: cRow 450ms var(--ease) both; animation-delay: calc(var(--i, 0) * 80ms); }
 
 /* Bento tiles: contact, kids age chart, adult programs, map banner.
-   Each tile glows softly where the pointer is (--gx/--gy from concept.ts). */
+   Each tile glows softly where the pointer is (--gx/--gy from motion.ts). */
 .bento { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; padding-top: 44px; padding-bottom: 44px; }
 .tile {
   --gx: 50%; --gy: 0%;
@@ -508,22 +508,6 @@ input { font: inherit; }
   .footer__letter { transition: none; transform: translate3d(0, 12%, 0); }
 }
 
-/* Concept badge: says what this is and links back to the same page on the current design */
-.concept-pill {
-  position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 60;
-  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px;
-  font-size: 13px; font-weight: 600; color: var(--fg);
-  background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.12);
-  transition: transform 100ms ease-out;
-}
-.concept-pill:hover { color: var(--fg); }
-.concept-pill:hover .concept-pill__back { color: var(--accent); }
-.concept-pill:active { transform: scale(0.97); }
-.concept-pill__dot { width: 8px; height: 8px; border-radius: 999px; background: var(--accent); }
-.concept-pill__sep { color: var(--quaternary); }
-.concept-pill__back { color: var(--secondary); transition: color 150ms ease-out; }
-
 /* ---------- Booking sheet (shared markup from BookingSheet.astro) ---------- */
 .scrim { position: fixed; inset: 0; z-index: 90; background: rgba(0, 0, 0, 0.3); opacity: 0; pointer-events: none; transition: opacity 300ms ease-out; }
 .sheet {
@@ -579,13 +563,11 @@ input { font: inherit; }
   .program-card:hover, .slot:hover { transform: none; }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .nav, .pop, .sheet, .concept-pill { background: #fff !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .nav, .pop, .sheet { background: #fff !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 }
 @media (max-width: 599px) {
   .hero { padding-top: 104px; }
   .page-head { padding-top: 96px; }
-  .concept-pill { left: 50%; transform: translateX(-50%); white-space: nowrap; }
-  .concept-pill:active { transform: translateX(-50%) scale(0.97); }
 }
 
 /* =====================================================================
@@ -596,7 +578,6 @@ input { font: inherit; }
    and a program card's photo morphs into that program page's hero. */
 @view-transition { navigation: auto; }
 .nav { view-transition-name: c-nav; }
-.concept-pill { view-transition-name: c-pill; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 320ms; animation-timing-function: var(--ease); }
 ::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: var(--ease); }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
@@ -715,7 +696,7 @@ input { font: inherit; }
 }
 
 /* ---------- Values as a belt progression ----------
-   A belt fills white → yellow → green → black as you scroll (--p, 0..1, set by concept.ts),
+   A belt fills white → yellow → green → black as you scroll (--p, 0..1, set by motion.ts),
    and each value lights up when the belt reaches its knot. Horizontal on wide screens, vertical on phones. */
 .belt-panel {
   margin-top: 40px; padding: clamp(28px, 5vw, 56px); border-radius: 28px;
@@ -879,7 +860,7 @@ input { font: inherit; }
 }
 
 /* ---------- Head instructor: collectible "fighter card" + career timeline ----------
-   The card tilts toward the pointer (--rx/--ry from concept.ts), with a holographic gold sheen and
+   The card tilts toward the pointer (--rx/--ry from motion.ts), with a holographic gold sheen and
    a glare that follow the pointer (--mx/--my). On touch screens it sways gently on its own. */
 .coach { align-items: center; gap: clamp(40px, 7vw, 96px); }
 .coach__stage { display: grid; place-items: center; perspective: 1100px; }
@@ -1015,13 +996,12 @@ input { font: inherit; }
 /* Mono labels */
 .eyebrow, .tag, .label, .footer__label, .timeline__when, .belt__num, .program-card__num, .program-card__tag,
 .fcard__tag, .fcard__no, .fcard__stats dt, .next__head, .next__day, .slot__time, .ages__yrs, .ages__scale span,
-.chat__status, .day h2, .back, .concept-pill {
+.chat__status, .day h2, .back {
   font-family: var(--font-mono); font-weight: 500;
 }
 .eyebrow, .label, .footer__label, .tag, .program-card__tag, .next__head { font-size: 12px; letter-spacing: 0.1em; }
 .eyebrow { font-weight: 600; }
 .day h2 { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
 .slot__time { font-size: 12px; letter-spacing: 0.02em; }
-.concept-pill { font-size: 12px; letter-spacing: 0.02em; }
 .belt__num, .program-card__num { letter-spacing: 0.08em; }
 .fcard__stats dt { font-size: 10px; letter-spacing: 0.02em; }

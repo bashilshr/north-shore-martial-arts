@@ -10,42 +10,14 @@ document.querySelectorAll<HTMLImageElement>('[data-label] > img').forEach((el) =
   else el.addEventListener('error', () => markMissing(el), { once: true });
 });
 
-/* ---------- Theme: dark (default) / light, remembered per visitor ---------- */
-const themeToggles = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
-const themeMeta = document.querySelector<HTMLMetaElement>('meta[data-theme-color]');
-function syncThemeUi() {
-  const light = root.getAttribute('data-theme') === 'light';
-  themeToggles.forEach((b) => {
-    if (b.hasAttribute('aria-label')) b.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
-  });
-  document.querySelectorAll('[data-theme-label]').forEach((el) => { el.textContent = light ? 'Dark theme' : 'Light theme'; });
-  themeMeta?.setAttribute('content', light ? '#f3f1ec' : '#171717');
-}
-themeToggles.forEach((b) => b.addEventListener('click', () => {
-  const light = root.getAttribute('data-theme') !== 'light';
-  if (!reduceMotion.matches) {
-    root.classList.add('theme-anim');
-    window.setTimeout(() => root.classList.remove('theme-anim'), 350);
-  }
-  if (light) root.setAttribute('data-theme', 'light');
-  else root.removeAttribute('data-theme');
-  try { localStorage.setItem('nsmmac-theme', light ? 'light' : 'dark'); } catch { /* storage blocked */ }
-  syncThemeUi();
-}));
-syncThemeUi();
-
-/* ---------- Nav: compact + material once scrolled, hero parallax ---------- */
-const parallax = document.querySelector<HTMLElement>('[data-parallax]');
+/* ---------- Nav: compact + material once scrolled ---------- */
 function onScroll() {
   root.toggleAttribute('data-scrolled', window.scrollY > 24);
-  if (parallax && !reduceMotion.matches && window.scrollY < window.innerHeight * 1.2) {
-    parallax.style.transform = `translate3d(0,${window.scrollY * 0.25}px,0)`;
-  }
 }
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
-/* ---------- Fullscreen menu ---------- */
+/* ---------- Narrow-screen menu popover ---------- */
 const menuToggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
 function setMenu(open: boolean) {
   root.toggleAttribute('data-menu-open', open);
@@ -218,43 +190,6 @@ function initCarousel(vp: HTMLElement) {
   apply(target());
 }
 document.querySelectorAll<HTMLElement>('[data-carousel]').forEach(initCarousel);
-
-/* ---------- Testimonials: auto-advancing tabs ---------- */
-function initTestimonials(section: HTMLElement) {
-  const tabs = [...section.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-  const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')!)!);
-  let i = 0, timer = 0;
-  const show = (n: number) => {
-    i = n;
-    tabs.forEach((t, k) => {
-      t.setAttribute('aria-selected', String(k === n));
-      t.tabIndex = k === n ? 0 : -1;
-      // Restart the progress bar animation.
-      const fill = t.querySelector<HTMLElement>('.quote-tab__fill');
-      if (fill) { fill.style.animation = 'none'; void fill.offsetWidth; fill.style.animation = ''; }
-    });
-    panels.forEach((p, k) => { p.hidden = k !== n; });
-  };
-  const start = () => { clearInterval(timer); timer = window.setInterval(() => show((i + 1) % tabs.length), 7000); };
-  tabs.forEach((t, k) => {
-    t.addEventListener('click', () => { show(k); start(); });
-    t.addEventListener('keydown', (e) => {
-      const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0;
-      if (!d) return;
-      e.preventDefault();
-      const n = (i + d + tabs.length) % tabs.length;
-      show(n); start(); tabs[n].focus();
-    });
-  });
-  // Pause while the user is reading (hover / keyboard focus).
-  const pause = () => { clearInterval(timer); section.classList.add('is-paused'); };
-  const resume = () => { section.classList.remove('is-paused'); show(i); start(); };
-  section.addEventListener('pointerenter', pause);
-  section.addEventListener('pointerleave', resume);
-  show(0);
-  start();
-}
-document.querySelectorAll<HTMLElement>('[data-testimonials]').forEach(initTestimonials);
 
 /* ---------- Kids level tabs (deep-linkable via #minicubs etc.) ---------- */
 const levelTabs = document.querySelector<HTMLElement>('[data-level-tabs]');

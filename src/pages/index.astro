@@ -1,7 +1,6 @@
 ---
-import ConceptLayout from '../../layouts/ConceptLayout.astro';
-import { PROGRAMS, QUOTES, AFFILIATIONS, STATS, PHONE_HREF, FACEBOOK, CLUB_NAME, img } from '../../data/site';
-import { COLORS, VALUE_NOTES, HERO_IMAGE, conceptHref } from '../../data/concept';
+import Layout from '../layouts/Layout.astro';
+import { PROGRAMS, QUOTES, AFFILIATIONS, STATS, VALUES, COLORS, HERO_IMAGE, PHONE_HREF, FACEBOOK, CLUB_NAME, img, programHref } from '../data/site';
 
 const HEADLINE = ['Martial', 'arts', 'for', 'the'];
 const HEADLINE_ACCENT = ['whole', 'family.'];
@@ -35,10 +34,10 @@ const TIMELINE = [
 // Avatar colours for the testimonial thread.
 const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
 ---
-<ConceptLayout
-  title={`${CLUB_NAME} — Cremorne (concept)`}
-  description="Concept: a light, Apple-style design for the club site."
-  current="/"
+<Layout
+  title={`${CLUB_NAME} — Cremorne`}
+  description="Kids martial arts, kickboxing, boxing and self defence on Military Road, Cremorne, led by Hall of Fame instructor Master Steven Tran. Book a free trial."
+  image={img(HERO_IMAGE)}
 >
   <!-- HERO: centred headline over a fan of class photos that drift apart as you scroll -->
   <section class="hero hero--collage">
@@ -54,7 +53,7 @@ const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
       </h1>
       <p class="lead rise" style="animation-delay:520ms">Kids programs from 3 to 13, and kickboxing, boxing, self defence and personal training for adults, taught by Hall of Fame instructor Master Steven Tran.</p>
       <div class="row rise" style="animation-delay:620ms">
-        <a class="pill pill--accent pill--lg" href={conceptHref('timetable')}>See timetable &amp; book a class</a>
+        <a class="pill pill--accent pill--lg" href={'/timetable/'}>See timetable &amp; book a class</a>
         <a class="pill pill--soft pill--lg" href={PHONE_HREF}>Call the club</a>
       </div>
       <p class="fine rise" style="animation-delay:700ms">First class is free. Bookings essential.</p>
@@ -96,7 +95,7 @@ const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
     <div class="carousel" data-carousel>
       <div class="carousel__track" data-car-track>
         {PROGRAMS.map((p, i) => (
-          <a class="program-card" href={conceptHref(p.slug)} draggable="false" style={`--tone:${COLORS[p.id]}`}>
+          <a class="program-card" href={programHref(p)} draggable="false" style={`--tone:${COLORS[p.id]}`}>
             <div class="photo program-card__photo" data-label={p.imgLabel} style={`view-transition-name:prog-${p.id}`}><img src={img(p.img)} alt="" loading="lazy" draggable="false"></div>
             <span class="program-card__num" aria-hidden="true">0{i + 1}</span>
             <span class="program-card__go" aria-hidden="true">
@@ -125,7 +124,7 @@ const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
       <div class="belt" data-belt>
         <div class="belt__track" aria-hidden="true"><div class="belt__fill"></div></div>
         <ol class="belt__steps">
-          {VALUE_NOTES.map((v, i) => (
+          {VALUES.map((v, i) => (
             <li class="belt__step" style={`--c:${BELTS[i]}`}>
               <span class="belt__node" aria-hidden="true"></span>
               <span class="belt__num" aria-hidden="true">0{i + 1}</span>
@@ -182,7 +181,7 @@ const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
           </li>
         ))}
       </ol>
-      <a class="pill pill--soft" href={conceptHref('kids-martial-arts')}>Train with Master Tran</a>
+      <a class="pill pill--soft" href={'/kids-martial-arts/'}>Train with Master Tran</a>
     </div>
   </section>
 
@@ -215,10 +214,10 @@ const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
           </li>
         ))}
         <li class="chat__msg chat__msg--me">
-          <a class="chat__bubble chat__bubble--me" href={conceptHref('timetable')}>Can I book a free trial? →</a>
+          <a class="chat__bubble chat__bubble--me" href={'/timetable/'}>Can I book a free trial? →</a>
           <span class="chat__status" aria-hidden="true">Delivered</span>
         </li>
       </ol>
     </div>
   </section>
-</ConceptLayout>
+</Layout>

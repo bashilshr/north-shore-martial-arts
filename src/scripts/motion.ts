@@ -1,4 +1,4 @@
-// Motion for the light concept (/concept/). Runs alongside site.ts, which already handles the
+// Motion layer for the site. Runs alongside site.ts, which already handles the
 // carousel (pinned scroll-through), reveals, tabs, timetable filter and booking sheet.
 // Everything here animates transform/opacity only, and backs off under prefers-reduced-motion.
 

@@ -95,25 +95,35 @@ export const NAV = [
   { label: 'Timetable', href: '/timetable/' },
 ];
 
+/** The four values, in belt order (home page "belt" section). */
 export const VALUES = [
-  { num: '01', name: 'Courage', accent: false },
-  { num: '02', name: 'Respect', accent: true },
-  { num: '03', name: 'Integrity', accent: false },
-  { num: '04', name: 'Loyalty', accent: true },
+  { name: 'Courage', text: "Trying the kick you haven't landed yet, in front of the class." },
+  { name: 'Respect', text: 'For instructors, partners and the space: bowing in and bowing out.' },
+  { name: 'Integrity', text: 'Doing the full count when nobody is watching.' },
+  { name: 'Loyalty', text: 'Showing up for your team, week after week.' },
 ];
+
+/** Colour per program id and per kids level key (used for age labels and timetable times). */
+export const COLORS: Record<string, string> = {
+  kids: '#b4261f',
+  kickboxing: '#1a5fb4',
+  boxing: '#0f766e',
+  selfdefence: '#b45309',
+  pt: '#1d1d1f',
+  minicubs: '#b45309',
+  cubs: '#0f766e',
+  junior: '#1a5fb4',
+  senior: '#b4261f',
+  teens: '#1d1d1f',
+};
+
+export const HERO_IMAGE = 'fun-fresh-active-kids-2.jpg';
 
 export const STATS = [
   { label: 'Hall of Fame inductions', detail: 'Australasian Martial Arts & World Karate Union, 2019, for lifetime achievement.', value: '2' },
   { label: 'Kids programs', detail: 'Mini Cubs, Cubs, Junior Tigers, Senior Tigers, ages 3 to 13.', value: '4' },
   { label: 'Classes a week', detail: 'Across seven days, mornings to evenings, beginner and advanced streams.', value: '20' },
   { label: 'Affiliations', detail: 'National and world bodies across Taekwondo, boxing, kickboxing and jujitsu.', value: '20' },
-];
-
-export const STEPS = [
-  { num: '001', title: 'Try it free', text: 'Book any session on the timetable. No commitment. Just come in, train, and see how it feels.' },
-  { num: '002', title: 'Find your level', text: 'Kids are placed by age and ability; adults by goal. Beginner and advanced streams keep everyone challenged.' },
-  { num: '003', title: 'Grade up', text: 'Coloured belts give kids a next goal in reach. Adults progress through pads, drills and conditioning.' },
-  { num: '004', title: 'Keep showing up', text: 'Once or twice a week, term after term. Loyalty is one of our four values for a reason.' },
 ];
 
 export const QUOTES = [

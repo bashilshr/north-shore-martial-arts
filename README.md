@@ -1,6 +1,6 @@
 # North Shore Mixed Martial Arts Club (NSMMAC) website
 
-Static website built with [Astro](https://astro.build) from the v2 design in `../Website redesign with Apple design/`.
+Static website built with [Astro](https://astro.build). The look is the light, Apple-style design from `../Website redesign with Apple design/North Shore Martial Arts.dc.html` (previewed at `/concept/` until it became the main site; `public/_redirects` sends old `/concept/*` links to the same page at the root).
 
 ## Pages
 
@@ -9,12 +9,14 @@ Static website built with [Astro](https://astro.build) from the v2 design in `..
 | `/` | `src/pages/index.astro` |
 | `/kids-martial-arts/`, `/kickboxing/`, `/boxing/`, `/self-defence/`, `/personal-training/` | `src/pages/[slug].astro` (one template, data from `PROGRAMS`) |
 | `/timetable/` | `src/pages/timetable.astro` |
+| Nav, footer, SEO head | `src/layouts/Layout.astro` |
+| Styles / motion | `src/styles/global.css`, `src/scripts/site.ts` (behaviour), `src/scripts/motion.ts` (scroll and pointer effects) |
 
 Kids age groups can be deep-linked: `/kids-martial-arts/#minicubs`, `#cubs`, `#junior`, `#senior`.
 
 ## Editing content
 
-Programs, the timetable, testimonials, stats, affiliations, phone and address all live in **`src/data/site.ts`**. Change them there and every page updates.
+Programs, the timetable, testimonials, stats, values, program colours, affiliations, phone and address all live in **`src/data/site.ts`**. Change them there and every page updates.
 
 Timetable sessions are `[dayIndex, time, note]`, where `0` is Monday and `6` is Sunday.
 

@@ -1,19 +1,40 @@
 ---
-// Layout for the light "Apple design" concept pages under /concept/.
-// Shares the club data, booking sheet and client behaviour with the main site; only the look differs.
-import '../styles/concept.css';
+// Site layout: light, Apple-style design (from "North Shore Martial Arts.dc.html").
+// Nav, closing CTA + footer bento, booking sheet, and the SEO head every page shares.
+import '../styles/global.css';
 import BookingSheet from '../components/BookingSheet.astro';
-import { PHONE, PHONE_HREF, ADDRESS, FACEBOOK, CLUB_NAME, KIDS, TEENS, PROGRAMS, DAYS, type RawSession } from '../data/site';
-import { BASE, CONCEPT_NAV, conceptHref } from '../data/concept';
+import { PHONE, PHONE_HREF, ADDRESS, FACEBOOK, CLUB_NAME, CLUB_SHORT, KIDS, TEENS, PROGRAMS, DAYS, NAV, HERO_IMAGE, img, programHref, type RawSession } from '../data/site';
 
 interface Props {
   title: string;
   description: string;
-  /** Path of the same page on the current site, for the "back to current design" pill. */
-  current?: string;
+  /** Share image (Open Graph / Twitter). */
+  image?: string;
 }
 
-const { title, description, current = '/' } = Astro.props;
+const { title, description, image = img(HERO_IMAGE) } = Astro.props;
+const site = Astro.site ?? new URL('https://www.northshoremixedmartialartsclub.com.au');
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(image, site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsActivityLocation',
+  name: CLUB_NAME,
+  alternateName: CLUB_SHORT,
+  url: site.href,
+  telephone: PHONE,
+  image: ogImage,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: ADDRESS[0],
+    addressLocality: 'Cremorne',
+    addressRegion: 'NSW',
+    postalCode: '2090',
+    addressCountry: 'AU',
+  },
+  sameAs: [FACEBOOK],
+};
 const path = Astro.url.pathname.replace(/\/?$/, '/');
 const mapsHref = `https://maps.google.com/?q=${encodeURIComponent(`${ADDRESS[0]}, ${ADDRESS[1]}`)}`;
 const fullAddress = `${ADDRESS[0]}, ${ADDRESS[1]}`;
@@ -45,19 +66,26 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
   .sort((x, y) => x.d - y.d || x.start - y.start);
 ---
 <!doctype html>
-<html lang="en-AU" class="concept">
+<html lang="en-AU">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{title}</title>
   <meta name="description" content={description}>
-  <meta name="robots" content="noindex">
+  <link rel="canonical" href={canonical}>
   <meta name="theme-color" content="#f5f5f7">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={ogImage}>
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Shippori+Mincho+B1:wght@600;800&family=Atkinson+Hyperlegible+Next:wght@400..700&family=Atkinson+Hyperlegible+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="/logo-mark.png">
   <script is:inline>document.documentElement.classList.add('js');</script>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -65,12 +93,12 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
   <header class="nav" data-material>
     <span class="nav__progress" aria-hidden="true" data-progress></span>
     <div class="wrap nav__inner">
-      <a class="brand" href={`${BASE}/`} aria-label={`${CLUB_NAME}, home`}>
+      <a class="brand" href="/" aria-label={`${CLUB_NAME}, home`}>
         <img src="/logo-mark.png" alt="" width="32" height="34">
         <span class="brand__name"><strong>North Shore</strong><span>Mixed Martial Arts Club</span></span>
       </a>
       <nav class="nav__links" aria-label="Main">
-        {CONCEPT_NAV.map((n) => (
+        {NAV.map((n) => (
           <a class="nav__link" href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a>
         ))}
         <a class="pill pill--ink nav__call" href={PHONE_HREF}>Call {PHONE}</a>
@@ -78,7 +106,7 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
       <div class="nav__narrow">
         <button class="pill pill--soft nav__toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>Menu</button>
         <div class="pop" id="menu" data-material>
-          {CONCEPT_NAV.map((n) => (
+          {NAV.map((n) => (
             <a class="pop__link" href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a>
           ))}
           <a class="pop__call" href={PHONE_HREF}>Call {PHONE}</a>
@@ -92,14 +120,14 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
   </main>
 
   <footer class="footer">
-    <!-- Closing CTA + the next classes on the timetable (worked out live in Sydney time by concept.ts) -->
+    <!-- Closing CTA + the next classes on the timetable (worked out live in Sydney time by motion.ts) -->
     <div class="wrap footer__cta">
       <div class="stack footer__pitch" data-reveal>
         <p class="eyebrow eyebrow--glow">Free trial</p>
         <h2 class="footer__title">Your first class<br>is <em class="accent">on us.</em></h2>
         <p class="footer__lead">Pick any session and we'll hold a spot. Not sure which class fits? Call and we'll help you choose.</p>
         <div class="row">
-          <a class="pill pill--accent pill--lg" href={conceptHref('timetable')}>Book a free trial</a>
+          <a class="pill pill--accent pill--lg" href={'/timetable/'}>Book a free trial</a>
           <a class="pill pill--glass pill--lg" href={PHONE_HREF}>Call {PHONE}</a>
         </div>
       </div>
@@ -116,7 +144,7 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
             </li>
           ))}
         </ul>
-        <a class="next__all" href={conceptHref('timetable')}>Full timetable →</a>
+        <a class="next__all" href={'/timetable/'}>Full timetable →</a>
       </div>
     </div>
 
@@ -142,7 +170,7 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
         <ul class="ages">
           {KID_AGES.map((k) => (
             <li>
-              <a class="ages__row" href={`${conceptHref('kids-martial-arts')}#${k.key}`} style={`--from:${k.from}; --to:${k.to}; --c:${k.color}`}>
+              <a class="ages__row" href={`/kids-martial-arts/#${k.key}`} style={`--from:${k.from}; --to:${k.to}; --c:${k.color}`}>
                 <span class="ages__name">{k.name}</span>
                 <span class="ages__lane" aria-hidden="true"><span class="ages__bar"></span></span>
                 <span class="ages__yrs">{k.ages}</span>
@@ -157,7 +185,7 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
 
       <nav class="tile tile--adults" data-glow aria-label="Adult programs">
         <p class="footer__label">Adults</p>
-        {PROGRAMS.slice(1).map((p) => <a class="tile__link" href={conceptHref(p.slug)}>{p.name}<span aria-hidden="true">→</span></a>)}
+        {PROGRAMS.slice(1).map((p) => <a class="tile__link" href={programHref(p)}>{p.name}<span aria-hidden="true">→</span></a>)}
       </nav>
 
       <section class="tile tile--visit" data-glow aria-label="Visit the club">
@@ -202,15 +230,10 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
     </div>
   </footer>
 
-  <a class="concept-pill" href={current} data-material>
-    <span class="concept-pill__dot" aria-hidden="true"></span>
-    Concept preview<span class="concept-pill__sep" aria-hidden="true">·</span><span class="concept-pill__back">Current design →</span>
-  </a>
-
   <BookingSheet />
   <script>
     import '../scripts/site.ts';
-    import '../scripts/concept.ts';
+    import '../scripts/motion.ts';
   </script>
 </body>
 </html>

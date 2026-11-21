@@ -1,7 +1,6 @@
 ---
-import ConceptLayout from '../../layouts/ConceptLayout.astro';
-import { KIDS, TEENS, DAYS, PHONE_HREF, CLUB_NAME, sessions } from '../../data/site';
-import { COLORS } from '../../data/concept';
+import Layout from '../layouts/Layout.astro';
+import { KIDS, TEENS, DAYS, COLORS, PHONE_HREF, CLUB_NAME, sessions } from '../data/site';
 
 const all = [
   ...KIDS.flatMap((k) => sessions(k.name, k.sessions).map((s) => ({ ...s, group: 'kids', color: COLORS[k.key!] }))),
@@ -11,10 +10,9 @@ const week = DAYS.map((day) => ({ day, sessions: all.filter((s) => s.dayLong ===
 const groups = [['kids', 'Kids'], ['teens', 'Teens'], ['all', 'Everything']];
 const DEFAULT = 'kids';
 ---
-<ConceptLayout
-  title={`Timetable & Free Trial — ${CLUB_NAME} (concept)`}
-  description="Concept: weekly class timetable. Tap any session to request a free trial."
-  current="/timetable/"
+<Layout
+  title={`Timetable & Free Trial — ${CLUB_NAME}, Cremorne`}
+  description="Weekly class timetable for kids martial arts and teens boxing, kickboxing and MMA in Cremorne. Tap any session to request a free trial."
 >
   <section class="wrap page-head stack rise">
     <p class="eyebrow">Timetable</p>
@@ -55,4 +53,4 @@ const DEFAULT = 'kids';
       <a class="pill pill--ink" href={PHONE_HREF}>Call to arrange</a>
     </div>
   </section>
-</ConceptLayout>
+</Layout>

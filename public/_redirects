@@ -1,0 +1,4 @@
+# The light design was previewed at /concept/ before it became the main site.
+# Send old links (and any shared preview URLs) to the same page at the root.
+/concept/* /:splat 301
+/concept /  301

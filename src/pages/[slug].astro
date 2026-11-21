@@ -1,7 +1,6 @@
 ---
-import ConceptLayout from '../../layouts/ConceptLayout.astro';
-import { PROGRAMS, PHONE, PHONE_HREF, CLUB_NAME, img, programHref, sessions, type Program, type Level } from '../../data/site';
-import { COLORS, BASE, conceptHref } from '../../data/concept';
+import Layout from '../layouts/Layout.astro';
+import { PROGRAMS, COLORS, PHONE, PHONE_HREF, CLUB_NAME, img, programHref, sessions, type Program, type Level } from '../data/site';
 
 export function getStaticPaths() {
   return PROGRAMS.map((program) => ({ params: { slug: program.slug }, props: { program } }));
@@ -12,16 +11,16 @@ const levels: Level[] = program.levels ?? [program.level!];
 const hasTabs = levels.length > 1;
 const others = PROGRAMS.filter((p) => p.id !== program.id);
 ---
-<ConceptLayout title={`${program.title} — ${CLUB_NAME} (concept)`} description={program.description} current={programHref(program)}>
+<Layout title={`${program.title} — ${CLUB_NAME}, Cremorne`} description={program.description} image={img(program.hero)}>
   <section class="wrap page-head">
-    <a class="back" href={`${BASE}/#programs`}>← All programs</a>
+    <a class="back" href="/#programs">← All programs</a>
     <div class="split">
       <div class="stack rise">
         <p class="eyebrow" style={`color:${COLORS[program.id]}`}>{program.ages}</p>
         <h1 class="h1 h1--page">{program.title}</h1>
         <p class="lead">{program.intro}</p>
         <div class="row">
-          <a class="pill pill--accent" href={conceptHref('timetable')}>Book a free trial</a>
+          <a class="pill pill--accent" href={'/timetable/'}>Book a free trial</a>
           <a class="pill pill--soft" href={PHONE_HREF}>Call {PHONE}</a>
         </div>
       </div>
@@ -80,7 +79,7 @@ const others = PROGRAMS.filter((p) => p.id !== program.id);
   <section class="wrap section section--last">
     <p class="label">Other programs</p>
     <ul class="chips">
-      {others.map((o) => <li><a class="chip chip--link" href={conceptHref(o.slug)}>{o.name} →</a></li>)}
+      {others.map((o) => <li><a class="chip chip--link" href={programHref(o)}>{o.name} →</a></li>)}
     </ul>
   </section>
-</ConceptLayout>
+</Layout>

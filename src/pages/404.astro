@@ -3,20 +3,19 @@ import Layout from '../layouts/Layout.astro';
 import { PROGRAMS, CLUB_NAME, programHref } from '../data/site';
 ---
 <Layout title={`Page not found — ${CLUB_NAME}`} description="This page doesn't exist. Find kids martial arts, kickboxing, boxing and self defence classes in Cremorne.">
-  <section class="wrap tt-head rise">
+  <section class="wrap page-head stack rise">
     <p class="eyebrow">404 · Page not found</p>
-    <h1 class="display">Missed the<br>target.</h1>
-    <p>That page doesn't exist, or it moved when the site was rebuilt. Try one of these instead.</p>
-    <div class="btn-row">
-      <a class="btn btn--accent" href="/timetable/">Book a free trial</a>
-      <a class="btn btn--outline" href="/">Home</a>
+    <h1 class="h1 h1--page">Missed the <em class="accent">target.</em></h1>
+    <p class="lead">That page doesn't exist, or it moved when the site was rebuilt. Try one of these instead.</p>
+    <div class="row">
+      <a class="pill pill--accent" href="/timetable/">Book a free trial</a>
+      <a class="pill pill--soft" href="/">Home</a>
     </div>
   </section>
-  <section class="wrap other-programs">
-    <ul class="plain">
-      {PROGRAMS.map((p) => (
-        <li><a class="other-link" href={programHref(p)}><span><span class="num">{p.num}</span>{p.name}</span><span aria-hidden="true">→</span></a></li>
-      ))}
+  <section class="wrap section section--last">
+    <p class="label">Programs</p>
+    <ul class="chips">
+      {PROGRAMS.map((p) => <li><a class="chip chip--link" href={programHref(p)}>{p.name} →</a></li>)}
     </ul>
   </section>
 </Layout>
