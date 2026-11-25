@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { KIDS, TEENS, DAYS, COLORS, PHONE_HREF, CLUB_NAME, sessions } from '../data/site';
+import { KIDS, TEENS, DAYS, COLORS, PHONE_HREF, sessions } from '../data/site';
 
 const all = [
   ...KIDS.flatMap((k) => sessions(k.name, k.sessions).map((s) => ({ ...s, group: 'kids', color: COLORS[k.key!] }))),
@@ -11,8 +11,9 @@ const groups = [['kids', 'Kids'], ['teens', 'Teens'], ['all', 'Everything']];
 const DEFAULT = 'kids';
 ---
 <Layout
-  title={`Timetable & Free Trial — ${CLUB_NAME}, Cremorne`}
-  description="Weekly class timetable for kids martial arts and teens boxing, kickboxing and MMA in Cremorne. Tap any session to request a free trial."
+  title="Class Timetable Cremorne | Book Your Free Trial Today"
+  description="20+ kids and teen classes across all seven days. Find a time that suits your family, tap a session and claim your free trial class in Cremorne."
+  breadcrumbs={[{ name: 'Timetable', path: '/timetable/' }]}
 >
   <section class="wrap page-head stack rise">
     <p class="eyebrow">Timetable</p>

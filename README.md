@@ -22,6 +22,8 @@ Programs, the timetable, testimonials, stats, values, program colours, affiliati
 
 Timetable sessions are `[dayIndex, time, note]`, where `0` is Monday and `6` is Sunday.
 
+**SEO:** each program's Google title and description are `seoTitle` and `description` in `PROGRAMS` (keep titles under about 60 characters and descriptions under about 155). The home, timetable and 404 titles are set in their page files. `Layout.astro` builds the meta tags, Open Graph/Twitter cards and the JSON-LD graph (local business, website, breadcrumbs). `/sitemap.xml` and `/robots.txt` are generated from `src/pages/sitemap.xml.ts` and `src/pages/robots.txt.ts`.
+
 ## Run it
 
 ```sh

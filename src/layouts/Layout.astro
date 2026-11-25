@@ -10,31 +10,94 @@ interface Props {
   description: string;
   /** Share image (Open Graph / Twitter). */
   image?: string;
+  /** Describes the share image for screen readers and social cards. */
+  imageAlt?: string;
+  /** Keep this page out of search results (404s, previews). */
+  noindex?: boolean;
+  /** Breadcrumb trail after "Home", e.g. [{ name: 'Kickboxing', path: '/kickboxing/' }]. */
+  breadcrumbs?: { name: string; path: string }[];
+  /** Extra schema.org nodes for this page (added to the page's JSON-LD graph). */
+  schema?: Record<string, unknown>[];
 }
 
-const { title, description, image = img(HERO_IMAGE) } = Astro.props;
+const {
+  title,
+  description,
+  image = img(HERO_IMAGE),
+  imageAlt = `Kids martial arts class at ${CLUB_NAME}, Cremorne`,
+  noindex = false,
+  breadcrumbs = [],
+  schema = [],
+} = Astro.props;
 const site = Astro.site ?? new URL('https://www.northshoremixedmartialartsclub.com.au');
 const canonical = new URL(Astro.url.pathname, site).href;
 const ogImage = new URL(image, site).href;
+const abs = (p: string) => new URL(p, site).href;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SportsActivityLocation',
-  name: CLUB_NAME,
-  alternateName: CLUB_SHORT,
-  url: site.href,
-  telephone: PHONE,
-  image: ogImage,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: ADDRESS[0],
-    addressLocality: 'Cremorne',
-    addressRegion: 'NSW',
-    postalCode: '2090',
-    addressCountry: 'AU',
+// One JSON-LD graph per page: the club (a local business Google can show in Maps and the
+// knowledge panel), the website (gives Google the site name), plus breadcrumbs and page extras.
+const CLUB_ID = abs('/#club');
+const graph: Record<string, unknown>[] = [
+  {
+    '@type': ['SportsActivityLocation', 'LocalBusiness'],
+    '@id': CLUB_ID,
+    name: CLUB_NAME,
+    alternateName: [CLUB_SHORT, 'North Shore Martial Arts Club', 'North Shore MMA'],
+    description: 'Kids martial arts (ages 3–13), kickboxing, boxing, self defence and personal training in Cremorne, Sydney, led by Hall of Fame instructor Master Steven Tran.',
+    url: site.href,
+    telephone: PHONE,
+    image: [abs(img(HERO_IMAGE)), abs(img('kids-martial-arts-lined-up-016.jpg')), abs(img('kickboxing273-500.jpg'))],
+    logo: abs('/logo-full.png'),
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: ADDRESS[0],
+      addressLocality: 'Cremorne',
+      addressRegion: 'NSW',
+      postalCode: '2090',
+      addressCountry: 'AU',
+    },
+    areaServed: ['Cremorne', 'Cremorne Point', 'Neutral Bay', 'Mosman', 'Cammeray', 'North Sydney', 'Lower North Shore'].map((name) => ({ '@type': 'Place', name })),
+    hasMap: `https://maps.google.com/?q=${encodeURIComponent(`${ADDRESS[0]}, ${ADDRESS[1]}`)}`,
+    employee: {
+      '@type': 'Person',
+      name: 'Master Steven Tran',
+      jobTitle: 'Head instructor',
+      award: ['Australasian Martial Arts Hall of Fame (2019)', 'World Karate Union Hall of Fame (2019)'],
+    },
+    knowsAbout: ['Martial arts', 'Taekwondo', 'Kickboxing', 'Boxing', 'Self defence', 'Mixed martial arts', 'Hapkido', 'Krav Maga'],
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Classes',
+      itemListElement: PROGRAMS.map((p) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: p.title, description: p.description, url: abs(programHref(p)) },
+      })),
+    },
+    sameAs: [FACEBOOK],
   },
-  sameAs: [FACEBOOK],
-};
+  {
+    '@type': 'WebSite',
+    '@id': abs('/#website'),
+    name: CLUB_NAME,
+    alternateName: CLUB_SHORT,
+    url: site.href,
+    inLanguage: 'en-AU',
+    publisher: { '@id': CLUB_ID },
+  },
+  ...(breadcrumbs.length
+    ? [{
+        '@type': 'BreadcrumbList',
+        itemListElement: [{ name: 'Home', path: '/' }, ...breadcrumbs].map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.name,
+          item: abs(b.path),
+        })),
+      }]
+    : []),
+  ...schema,
+];
+const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
 const path = Astro.url.pathname.replace(/\/?$/, '/');
 const mapsHref = `https://maps.google.com/?q=${encodeURIComponent(`${ADDRESS[0]}, ${ADDRESS[1]}`)}`;
 const fullAddress = `${ADDRESS[0]}, ${ADDRESS[1]}`;
@@ -72,18 +135,32 @@ const NEXT_DATA = [...KIDS.flatMap((k) => toNext(k.name, k.sessions)), ...toNext
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{title}</title>
   <meta name="description" content={description}>
-  <link rel="canonical" href={canonical}>
+  {noindex
+    ? <meta name="robots" content="noindex, follow">
+    : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">}
+  {!noindex && <link rel="canonical" href={canonical}>}
   <meta name="theme-color" content="#f5f5f7">
+  <meta name="geo.region" content="AU-NSW">
+  <meta name="geo.placename" content="Cremorne, Sydney">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content={CLUB_NAME}>
+  <meta property="og:locale" content="en_AU">
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
   <meta property="og:url" content={canonical}>
   <meta property="og:image" content={ogImage}>
+  <meta property="og:image:alt" content={imageAlt}>
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+  <meta name="twitter:image:alt" content={imageAlt}>
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Shippori+Mincho+B1:wght@600;800&family=Atkinson+Hyperlegible+Next:wght@400..700&family=Atkinson+Hyperlegible+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="/logo-mark.png">
+  <link rel="apple-touch-icon" href="/logo-mark.png">
   <script is:inline>document.documentElement.classList.add('js');</script>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 </head>

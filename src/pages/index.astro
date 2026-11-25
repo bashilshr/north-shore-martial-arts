@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { PROGRAMS, QUOTES, AFFILIATIONS, STATS, VALUES, COLORS, HERO_IMAGE, PHONE_HREF, FACEBOOK, CLUB_NAME, img, programHref } from '../data/site';
+import { PROGRAMS, QUOTES, AFFILIATIONS, STATS, VALUES, COLORS, HERO_IMAGE, PHONE_HREF, FACEBOOK, img, programHref } from '../data/site';
 
 const HEADLINE = ['Martial', 'arts', 'for', 'the'];
 const HEADLINE_ACCENT = ['whole', 'family.'];
@@ -35,9 +35,10 @@ const TIMELINE = [
 const AVATAR = ['#b45309', '#0f766e', '#1a5fb4'];
 ---
 <Layout
-  title={`${CLUB_NAME} — Cremorne`}
-  description="Kids martial arts, kickboxing, boxing and self defence on Military Road, Cremorne, led by Hall of Fame instructor Master Steven Tran. Book a free trial."
+  title={'Martial Arts Cremorne for Kids & Adults | First Class Free'}
+  description="Confident kids, fitter adults. Hall of Fame Master Steven Tran teaches kids martial arts (3–13), kickboxing, boxing and self defence in Cremorne. First class free!"
   image={img(HERO_IMAGE)}
+  imageAlt="Kids having fun in a martial arts class in Cremorne"
 >
   <!-- HERO: centred headline over a fan of class photos that drift apart as you scroll -->
   <section class="hero hero--collage">
